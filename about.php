@@ -62,9 +62,9 @@
 <div class="about-hero">
     <h1>Our Culinary Philosophy</h1>
     <p>
-        At FoodFusion, we believe that home cooking is the ultimate expression of creativity and love[cite: 1]. 
+        At FoodFusion, we believe that home cooking is the ultimate expression of creativity and love. 
         Our platform is dedicated to promoting culinary creativity by turning every kitchen into a space 
-        for experimentation, sharing, and cultural connection[cite: 1].
+        for experimentation, sharing, and cultural connection.
     </p>
 </div>
 
@@ -77,17 +77,17 @@
         <div class="value-box">
             <i class="fa-solid fa-lightbulb"></i>
             <h3>Creativity</h3>
-            <p class="value-desc">Encouraging home cooks to innovate, tweak recipes, and invent dynamic flavors[cite: 1].</p>
+            <p class="value-desc">Encouraging home cooks to innovate, tweak recipes, and invent dynamic flavors.</p>
         </div>
         <div class="value-box">
             <i class="fa-solid fa-users"></i>
             <h3>Community</h3>
-            <p class="value-desc">Fostering a warm, vibrant community where food enthusiasts can connect and share[cite: 1].</p>
+            <p class="value-desc">Fostering a warm, vibrant community where food enthusiasts can connect and share.</p>
         </div>
         <div class="value-box">
             <i class="fa-solid fa-seedling"></i>
             <h3>Sustainability</h3>
-            <p class="value-desc">Promoting healthy home cooking habits alongside mindfulness of global resource usage[cite: 1].</p>
+            <p class="value-desc">Promoting healthy home cooking habits alongside mindfulness of global resource usage.</p>
         </div>
     </div>
 
@@ -98,19 +98,19 @@
             <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=300&q=80" alt="Chef">
             <h3>Chef Alex Mercer</h3>
             <p class="team-role">Culinary Director</p>
-            <p class="team-desc">Curates recipe selections and designs our instructional kitchen tutorials[cite: 1].</p>
+            <p class="team-desc">Curates recipe selections and designs our instructional kitchen tutorials.</p>
         </div>
         <div class="team-card">
             <img src="https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=300&q=80" alt="Developer">
             <h3>Sarah Chen</h3>
             <p class="team-role">Lead Architect</p>
-            <p class="team-desc">Manages platform architecture to ensure optimal resource sharing and connectivity[cite: 1].</p>
+            <p class="team-desc">Manages platform architecture to ensure optimal resource sharing and connectivity.</p>
         </div>
         <div class="team-card">
             <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Community Manager">
             <h3>Emma Watson</h3>
             <p class="team-role">Community Manager</p>
-            <p class="team-desc">Fosters engagement within the community cookbook and coordinates virtual kitchen events[cite: 1].</p>
+            <p class="team-desc">Fosters engagement within the community cookbook and coordinates virtual kitchen events.</p>
         </div>
     </div>
 </div>

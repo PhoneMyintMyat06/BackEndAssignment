@@ -43,13 +43,13 @@ nav {
 
 /* Menu Links Container */
 .nav-links {
-    display: flex !important;
-    flex-direction: row !important;
+    display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 10px 18px;
+    gap: 12px 24px; 
     flex-grow: 1;
-    margin: 0 15px;
+    margin: 0 20px;
 }
 
 nav a {
@@ -111,48 +111,43 @@ nav a:hover {
 }
 
 /* Buttons Styling */
-/* Buttons Styling */
-/* Base styles for forms, general CTA links, and primary nav buttons */
-form button, .cta-btn, nav button:last-child {
+form button, .cta-btn, .user-area button:last-child {
     background-color: var(--accent-color) !important;
     color: #FFFFFF !important;
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 14px;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    padding: 8px 18px !important;
+    border-radius: 20px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    border: none !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background-color 0.3s ease, color 0.3s ease !important;
 }
 
-/* Hover state for filled buttons (Login inside popup, Join Us, Logout) */
-form button:hover, .cta-btn:hover, nav button:last-child:hover {
+form button:hover, .cta-btn:hover, .user-area button:last-child:hover {
     background-color: #e03e3a !important;
     color: #FFFFFF !important;
 }
 
-/* Secondary ghost button style (Specifically for the initial Login button inside <nav>) */
-nav button {
+.user-area button:first-child:not(:last-child) {
     background-color: transparent !important;
     color: var(--text-dark) !important;
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 14px;
-    border: 1px solid #CBD5E0;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    padding: 8px 18px !important;
+    border-radius: 20px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    border: 1px solid #CBD5E0 !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
 }
 
-/* Hover state for the secondary ghost Login button */
-nav button:hover {
+.user-area button:first-child:not(:last-child):hover {
     background-color: var(--primary-bg) !important;
     color: var(--accent-color) !important;
-    border-color: var(--accent-color);
+    border-color: var(--accent-color) !important;
 }
 
 /* Hero Section */
@@ -304,25 +299,53 @@ footer {
     background-color: var(--text-dark);
     color: white;
     text-align: center;
-    padding: 30px 20px;
+    padding: 40px 20px;
     margin-top: 60px;
+    
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
 }
 
-.social-links a {
-    color: white;
-    font-size: 20px;
-    margin: 0 10px;
+.footer-socials a, .social-links a {
+    color: white !important;
+    font-size: 22px;
+    margin: 0 15px;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.2s ease, color 0.2s ease;
 }
 
-.social-links a:hover {
-    color: var(--accent-color);
+.footer-socials a:hover, .social-links a:hover {
+    color: var(--accent-color) !important;
+    transform: translateY(-3px); 
+}
+
+.footer-links {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .footer-links a {
-    color: #A0AEC0;
+    color: #A0AEC0 !important;
     text-decoration: none;
-    margin: 0 8px;
-    font-size: 13px;
+    margin: 0 12px;
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: var(--accent-color) !important;
+}
+
+/* Copyright စာတန်း */
+.footer-copyright, footer p {
+    margin-top: 20px; 
+    font-size: 13px; 
+    color: #A0AEC0;
 }
 
 /* About Page Layout & Components */
@@ -415,16 +438,6 @@ footer {
     color: var(--text-muted); 
     font-size: 14px; 
     margin-top: 10px;
-}
-
-.footer-socials {
-    margin-bottom: 15px;
-}
-
-.footer-copyright {
-    margin-top: 15px; 
-    font-size: 12px; 
-    color: #A0AEC0;
 }
 
 @media (max-width: 768px) {
