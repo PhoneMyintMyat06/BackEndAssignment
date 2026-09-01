@@ -13,9 +13,12 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("ssss", $first_name, $last_name, $email, $password);
 
 if ($stmt->execute()) {
-    echo "Registration successful. <a href= 'index.php'>Go back</a>";
+    // အောင်မြင်ပါက index.php သို့ success မက်ဆေ့ချ်နှင့်အတူ ပို့မည်
+    header("Location: index.php?success=" . urlencode("Registration successful! You can now login."));
+    exit();
 } else {
-    echo "Email already exists. <a href= 'index.php'>Try again</a>";
+    // အမှားရှိပါက (ဥပမာ- Email ထပ်နေပါက) index.php သို့ error မက်ဆေ့ချ်နှင့်အတူ ပို့မည်
+    header("Location: index.php?error=" . urlencode("Email already exists. Please try again."));
+    exit();
 }
-
 ?>

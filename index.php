@@ -1,4 +1,9 @@
-<?php session_start(); ?>
+<?php 
+session_start(); 
+
+// Cookie လက်ခံမှုကို PHP ဘက်မှပါ စစ်ဆေးခြင်း
+$cookie_accepted = isset($_COOKIE['foodfusion_cookie_accepted']) ? true : false;
+?>
 
 <!DOCTYPE html>
 <html>
@@ -10,6 +15,46 @@
 
 <body>
 
+<!-- Telegram Style Notification Card (Error & Success) -->
+<?php if(isset($_GET['error']) || isset($_GET['success'])): ?>
+    <?php 
+        $is_success = isset($_GET['success']);
+        $msg_title = $is_success ? "FoodFusion Success" : "FoodFusion Alert";
+        $msg_content = $is_success ? $_GET['success'] : $_GET['error'];
+        $icon_class = $is_success ? "fa-solid fa-circle-check" : "fa-solid fa-triangle-exclamation";
+        $bg_color = $is_success ? "#C6F6D5" : "#FFF5F5"; 
+        $border_color = $is_success ? "#38A169" : "#E53E3E";
+    ?>
+    <div id="tgNotification" class="tg-notification" style="background-color: <?php echo $bg_color; ?>; border-left: 5px solid <?php echo $border_color; ?>;">
+        <div class="tg-notification-icon" style="color: <?php echo $border_color; ?>;">
+            <i class="<?php echo $icon_class; ?>"></i>
+        </div>
+        <div class="tg-notification-content">
+            <div class="tg-notification-title" style="color: <?php echo $border_color; ?>;"><?php echo $msg_title; ?></div>
+            <div><?php echo htmlspecialchars($msg_content); ?></div>
+        </div>
+        <button class="tg-notification-close" onclick="closeTgNotification()">&times;</button>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const notif = document.getElementById('tgNotification');
+            
+            setTimeout(() => {
+                notif.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 5000);
+        });
+
+        function closeTgNotification() {
+            document.getElementById('tgNotification').classList.remove('show');
+        }
+    </script>
+<?php endif; ?>
+
 <nav>
     <a href="index.php" class="brand-logo">FoodFusion</a>
     
@@ -19,6 +64,7 @@
 
         <?php if(!isset($_SESSION['user_id'])): ?>
             <a href="recipes.php">Recipe Collection</a>
+            <a href="contact.php">Contact Us</a>
         <?php endif; ?>
 
         <?php if(isset($_SESSION['role']) && $_SESSION['role'] == 'member'): ?>
@@ -26,6 +72,7 @@
             <a href="community_cookbook.php">Community Cookbook</a>
             <a href="culinary_resources.php">Culinary Resources</a>
             <a href="educational_resources.php">Educational Resources</a>
+            <a href="contact.php">Contact Us</a>
         <?php endif; ?>
 
         <?php if(isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
@@ -38,9 +85,10 @@
                     <a href="admin_resources.php">Resources</a>
                 </div>
             </div>
-        <?php endif; ?>
 
-        <a href="#">Contact Us</a>
+            <!-- Admin များအတွက် Contact Us (admin_contact.php) သို့ တိုက်ရိုက်သွားရန် -->
+            <a href="admin_contact.php">Contact Us</a>
+        <?php endif; ?>
     </div>
 
     <span class="user-area">
@@ -120,20 +168,23 @@
     <button onclick="closeAll()">Close</button>
 </div>
 
-<div class="cookie-banner" id="cookieBanner">
-    <p style="font-size: 14px;">We use cookies to improve your user experience. <a href="#" style="color: var(--accent-color); text-decoration: none;">Privacy & Cookie Info</a></p>
-    <button onclick="document.getElementById('cookieBanner').style.display='none'">Accept</button>
+<!-- Cookie Banner -->
+<div class="cookie-banner" id="cookieBanner" style="display: <?php echo $cookie_accepted ? 'none' : 'flex'; ?>;">
+    <p style="font-size: 14px;">We use cookies to improve your user experience. 
+        <a href="cookie_policy.php" style="color: var(--accent-color); text-decoration: none;">Cookie Policy</a>
+    </p>
+    <button onclick="acceptCookies()">Accept</button>
 </div>
 
 <footer>
     <div class="social-links" style="margin-bottom: 15px;">
-        <a href="#"><i class="fa-brands fa-facebook"></i></a>
-        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-        <a href="#"><i class="fa-brands fa-pinterest"></i></a>
-        <a href="#"><i class="fa-brands fa-twitter"></i></a>
+        <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+        <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://pinterest.com" target="_blank"><i class="fa-brands fa-pinterest"></i></a>
+        <a href="https://twitter.com" target="_blank"><i class="fa-brands fa-twitter"></i></a>
     </div>
     <div class="footer-links">
-        <a href="#">Privacy Policy</a> | <a href="#">Cookie Policy</a>
+        <a href="privacy.php">Privacy Policy</a> | <a href="cookie_policy.php">Cookie Policy</a>
     </div>
     <p style="margin-top: 15px; font-size: 12px; color: #A0AEC0;">&copy; 2026 FoodFusion. All Rights Reserved.</p>
 </footer>
@@ -150,6 +201,11 @@ function showLogin() {
 function closeAll() {
     document.getElementById("registerForm").style.display = "none";
     document.getElementById("loginForm").style.display = "none";
+}
+
+function acceptCookies() {
+    document.cookie = "foodfusion_cookie_accepted=true; max-age=" + 60*60*24*30 + "; path=/";
+    document.getElementById('cookieBanner').style.display = 'none';
 }
 </script>
 

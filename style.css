@@ -295,6 +295,63 @@ h1 {
     cursor: pointer;
 }
 
+/* Telegram Style Notification Card */
+.tg-notification {
+    position: fixed;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--card-bg);
+    color: var(--text-dark);
+    padding: 16px 22px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    font-family: sans-serif;
+    font-size: 14px;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 420px;
+    max-width: 90%;
+    border-left: 5px solid var(--accent-color);
+    transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.tg-notification.show {
+    top: 25px;
+}
+
+.tg-notification-icon {
+    font-size: 22px;
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+}
+
+.tg-notification-content {
+    flex-grow: 1;
+}
+
+.tg-notification-title {
+    font-weight: bold;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+}
+
+.tg-notification-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+}
+.tg-notification-close:hover {
+    color: var(--text-dark);
+}
+
 footer {
     background-color: var(--text-dark);
     color: white;
@@ -442,4 +499,729 @@ footer {
 
 @media (max-width: 768px) {
     .grid-3col { grid-template-columns: 1fr; }
+}
+
+* ==========================================================================
+   COMMUNITY COOKBOOK PAGE STYLES (Wide Padding + Tab Navigation)
+   ========================================================================== */
+
+/* Hero Overrides */
+.community-hero-override {
+    margin-bottom: 35px;
+    padding-bottom: 40px;
+}
+
+/* Page Sub-Navigation Tabs */
+.communityTabNav {
+    display: inline-flex;
+    gap: 8px;
+    background: #EDF2F7;
+    padding: 6px;
+    border-radius: 30px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+    margin-top: 25px;
+    border: 1px solid #E2E8F0;
+}
+
+.communityTabLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 24px;
+    border-radius: 25px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.communityTabLink i {
+    font-size: 14px;
+    transition: transform 0.2s ease;
+}
+
+.communityTabLink:hover {
+    color: var(--accent-color);
+}
+
+.communityTabLink:hover i {
+    transform: translateY(-1px);
+}
+
+.communityTabLink.communityTabActive {
+    background: var(--accent-color);
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(255, 71, 66, 0.35);
+}
+
+.communityTabLink.communityTabActive i {
+    color: #FFFFFF !important;
+}
+
+/* Wide Container & Card Layout */
+.communityMainWrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.communityFeedList {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    margin-top: 25px;
+}
+
+/* Clean, Wide Card Padding */
+.communityPostCard {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 36px 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid #E2E8F0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.communityPostCard:hover {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.07);
+}
+
+/* Post Header Spacing */
+.communityPostHeader {
+    margin-bottom: 20px;
+}
+
+.communityPostTitle {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.35;
+    margin-bottom: 6px;
+}
+
+.communityPostMeta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.communityPostMeta i {
+    font-size: 16px;
+    color: var(--accent-color);
+}
+
+/* Post Image Container */
+.communityPostImageContainer {
+    width: calc(100% + 80px);
+    margin: 0 -40px 24px -40px;
+    max-height: 460px;
+    overflow: hidden;
+    background: #F7FAFC;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid #EDF2F7;
+    border-bottom: 1px solid #EDF2F7;
+}
+
+.communityPostImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Content Spacing */
+.communityPostBody {
+    margin-bottom: 24px;
+}
+
+.communityPostText {
+    font-size: 16px;
+    color: var(--text-dark);
+    line-height: 1.75;
+}
+
+/* Action Bar */
+.communityActionBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-top: 1px solid #EDF2F7;
+    border-bottom: 1px solid #EDF2F7;
+    margin-bottom: 24px;
+}
+
+.communityLikeButton {
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 20px;
+    background: var(--primary-bg);
+    border: 1px solid #E2E8F0;
+    transition: all 0.2s ease;
+}
+
+.communityLikeButton:hover {
+    background: #FFF0F0;
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.communityLikeCounter {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Comments Section */
+.communityCommentSectionTitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 16px;
+}
+
+.communityCommentBoxList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.communityCommentBubble {
+    background: var(--primary-bg);
+    border: 1px solid #EDF2F7;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.communityCommentUser {
+    color: var(--text-dark);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 2px;
+    font-size: 13px;
+}
+
+.communityCommentBody {
+    color: var(--text-dark);
+}
+
+/* Comment Form */
+.communityCommentInputForm {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.communityCommentInputField {
+    flex-grow: 1;
+    border: 1px solid #E2E8F0;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 14px;
+    outline: none;
+    background: var(--card-bg);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.communityCommentInputField:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(255, 71, 66, 0.12);
+}
+
+.communityCommentSubmitBtn {
+    border-radius: 25px !important;
+    padding: 10px 22px !important;
+    font-size: 14px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .communityPostCard {
+        padding: 24px 20px;
+    }
+
+    .communityPostImageContainer {
+        width: calc(100% + 40px);
+        margin: 0 -20px 20px -20px;
+    }
+}
+
+/* ==========================================================================
+   MY WALL FORM & POST MANAGEMENT STYLES
+   ========================================================================== */
+
+/* Form Wrapper Alignment */
+.communityCreateCard {
+    margin-bottom: 40px;
+}
+
+.communityFormTitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.communityFormTitle i {
+    color: var(--accent-color);
+}
+
+.communityCreateForm {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.communityInput,
+.communityTextarea {
+    width: 100%;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 15px;
+    outline: none;
+    background: var(--primary-bg);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.communityInput:focus,
+.communityTextarea:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(255, 71, 66, 0.12);
+}
+
+.communityTextarea {
+    resize: vertical;
+}
+
+.communityFileGroup {
+    display: flex;
+    align-items: center;
+}
+
+.communityFileLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    background: #EDF2F7;
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.communityFileLabel:hover {
+    background: #E2E8F0;
+}
+
+.communityFileInput {
+    font-size: 14px;
+    margin-left: 12px;
+}
+
+.communitySubmitBtn {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-color);
+    color: #FFFFFF;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.communitySubmitBtn:hover {
+    box-shadow: 0 4px 12px rgba(255, 71, 66, 0.35);
+    transform: translateY(-1px);
+}
+
+/* Post Edit/Delete Management Bar */
+.communityPostManageBar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #EDF2F7;
+    margin-top: 10px;
+}
+
+.communityEditBtn,
+.communityDeleteBtn {
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s ease;
+}
+
+.communityEditBtn {
+    color: var(--text-dark);
+}
+
+.communityEditBtn:hover {
+    color: var(--accent-color);
+}
+
+.communityDeleteBtn {
+    color: #E53E3E;
+}
+
+.communityDeleteBtn:hover {
+    color: #C53030;
+}
+
+/* Select Dropdowns for Admin Form */
+.communitySelect {
+    flex: 1;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 15px;
+    outline: none;
+    background: var(--primary-bg);
+    color: var(--text-dark);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.communitySelect:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(255, 71, 66, 0.12);
+}
+
+/* Search Bar Styles */
+.communitySearchForm {
+    width: 100%;
+}
+
+.communitySearchInputGroup {
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 12px;
+}
+
+.communitySearchIcon {
+    position: absolute;
+    left: 16px;
+    color: var(--text-muted);
+    font-size: 15px;
+    pointer-events: none;
+}
+
+.communitySearchInput {
+    padding-left: 44px !important;
+}
+
+.communitySearchBtn {
+    padding: 12px 24px !important;
+    white-space: nowrap;
+}
+
+/* Select Dropdowns for Admin Form */
+.communitySelect {
+    width: 100%; /* Add this line to make the dropdown expand to full width */
+    flex: 1;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 15px;
+    outline: none;
+    background: var(--primary-bg);
+    color: var(--text-dark);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.communityFileGroup {
+    display: flex;
+    align-items: center;
+}
+
+.communityFileLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    background: #EDF2F7;
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.communityFileLabel:hover {
+    background: #E2E8F0;
+}
+
+/* Hide the raw browser file button so only your styled button shows */
+.communityFileInput {
+    display: none;
+}
+
+/* ==========================================================================
+   CONTACT US & ADMIN CONTACT MESSAGES STYLES
+   ========================================================================== */
+
+/* Contact Page Layout & Form Styles */
+.contact-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    background-color: var(--primary-bg);
+    min-height: 80vh;
+}
+
+.contact-container {
+    width: 100%;
+    max-width: 550px;
+    background: var(--card-bg);
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    border: 1px solid #E2E8F0;
+}
+
+.contact-container h2 {
+    text-align: center;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 14px;
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    background-color: var(--primary-bg);
+    color: var(--text-dark);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-sizing: border-box;
+}
+
+.form-group input:focus, 
+.form-group select:focus, 
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background-color: var(--card-bg);
+    box-shadow: 0 0 0 3px rgba(255, 71, 66, 0.12);
+}
+
+.form-group textarea {
+    resize: vertical;
+    height: 130px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent-color);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s, transform 0.1s, box-shadow 0.3s;
+}
+
+.submit-btn:hover {
+    background: #e03e3a;
+    box-shadow: 0 4px 12px rgba(255, 71, 66, 0.35);
+}
+
+.submit-btn:active {
+    transform: scale(0.98);
+}
+
+/* Admin Contact Messages Table Styles */
+.admin-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.admin-container h2 {
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+.admin-table-wrapper {
+    overflow-x: auto;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #E2E8F0;
+}
+
+.admin-messages-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-messages-table th {
+    padding: 12px;
+    border-bottom: 2px solid #E2E8F0;
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.admin-messages-table td {
+    padding: 12px;
+    border-bottom: 1px solid #EDF2F7;
+    font-size: 14px;
+    color: var(--text-dark);
+}
+
+.admin-messages-table tr:hover {
+    background-color: var(--primary-bg);
+}
+
+.admin-subject-badge {
+    background: #EDF2F7;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* ==========================================================================
+   ADMIN CONTACT MESSAGES STYLES
+   ========================================================================== */
+
+.active-nav {
+    color: var(--accent-color) !important;
+}
+
+.admin-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.admin-container h2 {
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+.admin-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 25px;
+}
+
+.admin-table-wrapper {
+    overflow-x: auto;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #E2E8F0;
+}
+
+.admin-messages-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-messages-table th {
+    padding: 12px;
+    border-bottom: 2px solid #E2E8F0;
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.admin-messages-table td {
+    padding: 12px;
+    border-bottom: 1px solid #EDF2F7;
+    font-size: 14px;
+    color: var(--text-dark);
+}
+
+.admin-messages-table tr:hover {
+    background-color: var(--primary-bg);
+}
+
+.admin-fw-bold {
+    font-weight: 600;
+}
+
+.admin-email {
+    color: #3182CE;
+}
+
+.admin-subject-badge {
+    background: #EDF2F7;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.admin-message-cell {
+    max-width: 300px;
+    word-break: break-word;
+}
+
+.admin-date {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.admin-no-data {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-muted);
 }

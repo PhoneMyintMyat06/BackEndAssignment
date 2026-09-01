@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Community Cookbook - My Wall</title>
+</head><?php
+session_start();
+include "db.php";
+
+/* Only logged-in users can access My Wall */
+if (!isset($_SESSION['user_id'])) {
+    header("Location: index.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+
+/* ADD POST */
+if (isset($_POST['submit_post'])) {
+
+    $title = $_POST['title'];
+    $content = $_POST['content'];
+    $imageName = "";
+
+    if (!empty($_FILES['image']['name'])) {
+        $imageName = time() . "_" . basename($_FILES['image']['name']);
+        $tmpName = $_FILES['image']['tmp_name'];
+        move_uploaded_file($tmpName, "uploads/" . $imageName);
+    }
+
+    $sql = "INSERT INTO community_posts 
+            (user_id, title, content, image)
+            VALUES (?, ?, ?, ?)";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("isss", $user_id, $title, $content, $imageName);
+    $stmt->execute();
+
+    header("Location: my_wall.php");
+    exit();
+}
+
+/* GET ONLY MY POSTS */
+$stmt = $conn->prepare("
+    SELECT *
+    FROM community_posts
+    WHERE user_id = ?
+    ORDER BY id DESC
+");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$posts = $stmt->get_result();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Cookbook - My Wall</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="communityPageBody">
+
+    <!-- Hero Section with Tab Navigation -->
+    <section class="hero community-hero-override">
+        <h1>Community Cookbook - My Wall</h1>
+        <p>Create, update, edit and delete your own recipes, cooking tips and culinary experiences.</p>
+        
+        <!-- Tab Navigation Container -->
+        <div class="communityTabNav">
+            <a href="community_cookbook.php" class="communityTabLink">
+                <i class="fa-solid fa-users"></i>
+                <span>Community</span>
+            </a>
+            <a href="my_wall.php" class="communityTabLink communityTabActive">
+                <i class="fa-solid fa-user"></i>
+                <span>My Wall</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <main class="communityMainWrapper">
+
+        <!-- Post Creation Card -->
+        <section class="communityPostCard communityCreateCard">
+            <h2 class="communityFormTitle">
+                <i class="fa-solid fa-pen-to-square"></i> Create New Post
+            </h2>
+
+            <form method="POST" enctype="multipart/form-data" class="communityCreateForm">
+                <div class="communityFormGroup">
+                    <input type="text" name="title" class="communityInput" placeholder="Post Title" required>
+                </div>
+
+                <div class="communityFormGroup">
+                    <textarea name="content" class="communityTextarea" placeholder="Share your recipe, cooking tip or culinary experience..." rows="4" required></textarea>
+                </div>
+
+                <div class="communityFormGroup communityFileGroup">
+                    <label for="postImageUpload" class="communityFileLabel">
+                        <i class="fa-solid fa-image"></i> Choose Photo
+                    </label>
+                    <input type="file" name="image" id="postImageUpload" class="communityFileInput">
+                </div>
+
+                <button type="submit" name="submit_post" class="communitySubmitBtn">
+                    <i class="fa-solid fa-paper-plane"></i> Submit Post
+                </button>
+            </form>
+        </section>
+
+        <!-- Posts Section -->
+        <h2 class="section-title">My Posts</h2>
+
+        <div class="communityFeedList">
+            <?php if ($posts->num_rows === 0): ?>
+                <div class="communityPostCard" style="text-align: center;">
+                    <p class="communityPostText">You haven't created any posts yet.</p>
+                </div>
+            <?php else: ?>
+                <?php while ($row = $posts->fetch_assoc()): ?>
+
+                    <article class="communityPostCard">
+
+                        <div class="communityPostHeader">
+                            <h3 class="communityPostTitle"><?php echo htmlspecialchars($row['title']); ?></h3>
+                        </div>
+
+                        <?php if (!empty($row['image'])): ?>
+                            <div class="communityPostImageContainer">
+                                <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" class="communityPostImg" alt="Post Image">
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="communityPostBody">
+                            <p class="communityPostText"><?php echo nl2br(htmlspecialchars($row['content'])); ?></p>
+                        </div>
+
+                        <!-- Management Bar (Edit/Delete Links) -->
+                        <div class="communityPostManageBar">
+                            <a href="edit_post.php?id=<?php echo $row['id']; ?>" class="communityEditBtn">
+                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                            </a>
+                            <a href="delete_post.php?id=<?php echo $row['id']; ?>" 
+                               onclick="return confirm('Delete this post?')" 
+                               class="communityDeleteBtn">
+                               <i class="fa-solid fa-trash-can"></i> Delete
+                            </a>
+                        </div>
+
+                    </article>
+
+                <?php endwhile; ?>
+            <?php endif; ?>
+        </div>
+
+    </main>
+
+</body>
+</html>
