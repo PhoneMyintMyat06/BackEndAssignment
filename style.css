@@ -1225,3 +1225,37 @@ footer {
     padding: 30px;
     color: var(--text-muted);
 }
+
+/* ==========================================================================
+   RESPONSIVE IMAGES, VIDEOS & MEDIA (NCC ASSIGNMENT REQUIREMENT)
+   ========================================================================== */
+
+img, video, canvas, svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Responsive Container for YouTube Embeds / Videos */
+.video-container, .embed-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    background: #000;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.video-container iframe, 
+.video-container embed, 
+.video-container object,
+.embed-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
