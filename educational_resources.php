@@ -27,7 +27,60 @@ $resources = $stmt->get_result();
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body id="communityPageBody">
+
+<body id="communityPageBody" class="publicResourcesPage">
+
+<nav>
+    <a href="index.php" class="brand-logo">FoodFusion</a>
+    
+    <div class="nav-links">
+        <!-- Guest Users (Not Logged In) -->
+        <?php if(!isset($_SESSION['user_id'])): ?>
+            <a href="index.php">Home</a>
+            <a href="about.php">About Us</a>
+            <a href="recipes.php">Recipe Collection</a>
+            <a href="contact.php">Contact Us</a>
+        <?php endif; ?>
+
+        <!-- Member Role -->
+        <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'member'): ?>
+            <a href="index.php">Home</a>
+            <a href="about.php">About Us</a>
+            <a href="recipes.php">Recipe Collection</a>
+            <a href="community_cookbook.php">Community Cookbook</a>
+            <a href="culinary_resources.php">Culinary Resources</a>
+            <a href="educational_resources.php">Educational Resources</a>
+            <a href="contact.php">Contact Us</a>
+        <?php endif; ?>
+
+        <!-- Admin Role -->
+        <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <a href="admin_dashboard.php">Dashboard</a>
+            <a href="manage_cookbook.php">Community Cookbook</a>
+
+            <div class="dropdown">
+                <a href="#">Manage Resources ▼</a>
+                <div class="dropdown-content">
+                    <a href="admin_recipes.php">Recipes Collection</a>
+                    <a href="admin_resources.php">Resources</a>
+                </div>
+            </div>
+
+            <a href="admin_contact.php">Contact Us</a>
+        <?php endif; ?>
+    </div>
+
+    <!-- User Auth Area -->
+    <span class="user-area">
+        <?php if(isset($_SESSION['user_id'])): ?>
+            Welcome, <?php echo htmlspecialchars($_SESSION['username'] ?? $_SESSION['user']); ?>
+            <a href="logout.php" class="cta-btn">Logout</a>
+        <?php else: ?>
+            <button onclick="showLogin()">Login</button>
+            <button onclick="showRegister()">Join Us</button>
+        <?php endif; ?>
+    </span>
+</nav>
 
     <!-- Hero Section -->
     <section class="hero community-hero-override">
@@ -46,48 +99,55 @@ $resources = $stmt->get_result();
     </section>
 
     <!-- Main Container -->
-    <main class="communityMainWrapper">
+    <main class="communityMainWrapper publicResourcesMain">
 
-        <div class="communityFeedList">
+        <div class="publicResourceGrid">
             <?php if ($resources->num_rows === 0): ?>
-                <div class="communityPostCard" style="text-align: center;">
-                    <p class="communityPostText">No educational resources available yet.</p>
+                <div class="publicResourceEmpty">
+                    <span><i class="fa-solid fa-graduation-cap"></i></span>
+                    <h2>No educational resources yet</h2>
+                    <p>Learning materials, guides, and videos will appear here when they are added.</p>
                 </div>
             <?php else: ?>
                 <?php while ($row = $resources->fetch_assoc()): ?>
-
-                    <article class="communityPostCard">
-
-                        <!-- Title & File Meta -->
-                        <div class="communityPostHeader">
-                            <h3 class="communityPostTitle"><?php echo htmlspecialchars($row['title']); ?></h3>
-                            <p class="communityPostMeta">
-                                <span><i class="fa-solid fa-paperclip"></i> <?php echo htmlspecialchars($row['file_name']); ?></span>
-                            </p>
+                    <?php
+                        $fileExtension = strtolower($row['file_type'] ?? pathinfo($row['file_name'], PATHINFO_EXTENSION));
+                        $isImage = in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'], true);
+                    ?>
+                    <article class="publicResourceCard">
+                        <div class="publicResourceCardHeader">
+                            <span class="publicResourceIcon"><i class="fa-solid fa-graduation-cap"></i></span>
+                            <span class="publicResourceCategory">Educational</span>
+                        </div>
+                        <div class="publicResourceContent">
+                            <h2><?php echo htmlspecialchars($row['title']); ?></h2>
+                            <p class="publicResourceDescription"><?php echo nl2br(htmlspecialchars($row['description'])); ?></p>
                         </div>
 
-                        <!-- Description Body -->
-                        <div class="communityPostBody">
-                            <p class="communityPostText"><?php echo nl2br(htmlspecialchars($row['description'])); ?></p>
-                        </div>
-
-                        <!-- Video Player Preview (If file is MP4) -->
-                        <?php if (strtolower($row['file_type']) === 'mp4'): ?>
-                            <div class="communityPostImageContainer" style="max-height: none; padding: 15px 0;">
-                                <video width="100%" controls style="border-radius: 8px; max-height: 400px; background: #000;">
-                                    <source src="uploads/resources/<?php echo htmlspecialchars($row['file_name']); ?>" type="video/mp4">
+                        <?php if ($fileExtension === 'mp4'): ?>
+                            <div class="publicResourceVideo">
+                                <video controls preload="metadata" playsinline>
+                                    <source src="uploads/resources/<?php echo rawurlencode($row['file_name']); ?>" type="video/mp4">
                                     Your browser does not support HTML video.
                                 </video>
                             </div>
+                        <?php elseif ($isImage): ?>
+                            <div class="publicResourceImage">
+                                <img src="uploads/resources/<?php echo rawurlencode($row['file_name']); ?>" alt="<?php echo htmlspecialchars($row['title']); ?>" loading="lazy">
+                            </div>
+                        <?php else: ?>
+                            <div class="publicResourceFile">
+                                <span class="publicResourceFileIcon"><i class="fa-solid <?php echo $fileExtension === 'pdf' ? 'fa-file-pdf' : 'fa-file-lines'; ?>"></i></span>
+                                <div><small>RESOURCE FILE</small><strong><?php echo htmlspecialchars(strtoupper($fileExtension ?: 'FILE')); ?></strong></div>
+                            </div>
                         <?php endif; ?>
 
-                        <!-- Action Bar / Download Button -->
-                        <div class="communityPostManageBar">
-                            <a href="uploads/resources/<?php echo htmlspecialchars($row['file_name']); ?>" download class="communityEditBtn" style="color: #FF4742;">
-                                <i class="fa-solid fa-download"></i> Download Resource
+                        <div class="publicResourceCardFooter">
+                            <span class="publicResourceFilename"><i class="fa-solid fa-paperclip"></i><?php echo htmlspecialchars($row['file_name']); ?></span>
+                            <a href="uploads/resources/<?php echo rawurlencode($row['file_name']); ?>" download class="publicResourceDownload">
+                                <i class="fa-solid fa-download"></i> Download
                             </a>
                         </div>
-
                     </article>
 
                 <?php endwhile; ?>

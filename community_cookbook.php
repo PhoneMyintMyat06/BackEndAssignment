@@ -64,7 +64,60 @@ $posts = $conn->query("
     <!-- Your Main Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body id="communityPageBody">
+
+<body id="communityPageBody" class="communityCookbookPage">
+
+<nav>
+    <a href="index.php" class="brand-logo">FoodFusion</a>
+    
+    <div class="nav-links">
+        <!-- Guest Users (Not Logged In) -->
+        <?php if(!isset($_SESSION['user_id'])): ?>
+            <a href="index.php">Home</a>
+            <a href="about.php">About Us</a>
+            <a href="recipes.php">Recipe Collection</a>
+            <a href="contact.php">Contact Us</a>
+        <?php endif; ?>
+
+        <!-- Member Role -->
+        <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'member'): ?>
+            <a href="index.php">Home</a>
+            <a href="about.php">About Us</a>
+            <a href="recipes.php">Recipe Collection</a>
+            <a href="community_cookbook.php">Community Cookbook</a>
+            <a href="culinary_resources.php">Culinary Resources</a>
+            <a href="educational_resources.php">Educational Resources</a>
+            <a href="contact.php">Contact Us</a>
+        <?php endif; ?>
+
+        <!-- Admin Role -->
+        <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <a href="admin_dashboard.php">Dashboard</a>
+            <a href="manage_cookbook.php">Community Cookbook</a>
+
+            <div class="dropdown">
+                <a href="#">Manage Resources ▼</a>
+                <div class="dropdown-content">
+                    <a href="admin_recipes.php">Recipes Collection</a>
+                    <a href="admin_resources.php">Resources</a>
+                </div>
+            </div>
+
+            <a href="admin_contact.php">Contact Us</a>
+        <?php endif; ?>
+    </div>
+
+    <!-- User Auth Area -->
+    <span class="user-area">
+        <?php if(isset($_SESSION['user_id'])): ?>
+            Welcome, <?php echo htmlspecialchars($_SESSION['username'] ?? $_SESSION['user']); ?>
+            <a href="logout.php" class="cta-btn">Logout</a>
+        <?php else: ?>
+            <button onclick="showLogin()">Login</button>
+            <button onclick="showRegister()">Join Us</button>
+        <?php endif; ?>
+    </span>
+</nav>
 
     <!-- Hero Section -->
     <section class="hero community-hero-override">
@@ -89,7 +142,14 @@ $posts = $conn->query("
         
         <h2 class="section-title">Community Posts</h2>
 
-        <div class="communityFeedList">
+        <div class="communityPostGrid">
+        <?php if ($posts->num_rows === 0): ?>
+            <div class="communityEmptyState">
+                <span><i class="fa-solid fa-book-open"></i></span>
+                <h3>No community posts yet</h3>
+                <p>Be the first to share a recipe, cooking tip, or kitchen story.</p>
+            </div>
+        <?php else: ?>
         <?php while ($row = $posts->fetch_assoc()): ?>
 
             <article class="communityPostCard">
@@ -104,7 +164,7 @@ $posts = $conn->query("
 
                 <?php if (!empty($row['image'])): ?>
                     <div class="communityPostImageContainer">
-                        <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" class="communityPostImg" alt="Post Image">
+                        <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" class="communityPostImg" alt="<?php echo htmlspecialchars($row['title']); ?>" loading="lazy">
                     </div>
                 <?php endif; ?>
 
@@ -168,6 +228,7 @@ $posts = $conn->query("
             </article>
 
         <?php endwhile; ?>
+        <?php endif; ?>
         </div>
 
     </main>

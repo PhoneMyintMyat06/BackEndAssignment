@@ -16,24 +16,30 @@
 <nav>
     <a href="index.php" class="brand-logo">FoodFusion</a>
     
-    <!-- Make sure this exact class is present wrapper around the links -->
     <div class="nav-links">
-        <a href="index.php">Home</a>
-        <a href="about.php">About Us</a>
-
+        <!-- Guest Users (Not Logged In) -->
         <?php if(!isset($_SESSION['user_id'])): ?>
+            <a href="index.php">Home</a>
+            <a href="about.php">About Us</a>
             <a href="recipes.php">Recipe Collection</a>
+            <a href="contact.php">Contact Us</a>
         <?php endif; ?>
 
-        <?php if(isset($_SESSION['role']) && $_SESSION['role'] == 'member'): ?>
+        <!-- Member Role -->
+        <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'member'): ?>
+            <a href="index.php">Home</a>
+            <a href="about.php">About Us</a>
             <a href="recipes.php">Recipe Collection</a>
             <a href="community_cookbook.php">Community Cookbook</a>
             <a href="culinary_resources.php">Culinary Resources</a>
             <a href="educational_resources.php">Educational Resources</a>
+            <a href="contact.php">Contact Us</a>
         <?php endif; ?>
 
-        <?php if(isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
-            <a href="community_cookbook.php">Community Cookbook</a>
+        <!-- Admin Role -->
+        <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <a href="admin_dashboard.php">Dashboard</a>
+            <a href="manage_cookbook.php">Community Cookbook</a>
 
             <div class="dropdown">
                 <a href="#">Manage Resources ▼</a>
@@ -42,14 +48,15 @@
                     <a href="admin_resources.php">Resources</a>
                 </div>
             </div>
-        <?php endif; ?>
 
-        <a href="#">Contact Us</a>
+            <a href="admin_contact.php">Contact Us</a>
+        <?php endif; ?>
     </div>
 
+    <!-- User Auth Area -->
     <span class="user-area">
         <?php if(isset($_SESSION['user_id'])): ?>
-            Welcome, <?php echo htmlspecialchars($_SESSION['user']); ?>
+            Welcome, <?php echo htmlspecialchars($_SESSION['username'] ?? $_SESSION['user']); ?>
             <a href="logout.php" class="cta-btn">Logout</a>
         <?php else: ?>
             <button onclick="showLogin()">Login</button>
@@ -57,7 +64,6 @@
         <?php endif; ?>
     </span>
 </nav>
-
 <!-- About Hero Section (Culinary Philosophy) -->
 <div class="about-hero">
     <h1>Our Culinary Philosophy</h1>

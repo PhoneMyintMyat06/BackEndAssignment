@@ -6,25 +6,51 @@ include "db.php";
 
 $cookie_accepted = isset($_COOKIE['foodfusion_cookie_accepted']) ? true : false;
 
-// မက်ဆေ့ချ် အသစ်ပို့ခြင်းကို လက်ခံရန်
 $success_msg = $error_msg = "";
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
-    $name = trim($_POST['name']);
-    $email = trim($_POST['email']);
-    $subject = trim($_POST['subject']);
-    $message = trim($_POST['message']);
+$contact_user = null;
+$contact_user_id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+if ($contact_user_id > 0) {
+    $user_stmt = $conn->prepare("SELECT first_name, last_name, email FROM users WHERE id = ?");
+    $user_stmt->bind_param("i", $contact_user_id);
+    $user_stmt->execute();
+    $contact_user = $user_stmt->get_result()->fetch_assoc();
+}
 
-    if (!empty($name) && !empty($email) && !empty($subject) && !empty($message)) {
-        $stmt = $conn->prepare("INSERT INTO contact_messages (name, email, subject, message, status) VALUES (?, ?, ?, ?, 'Pending')");
-        $stmt->bind_param("ssss", $name, $email, $subject, $message);
-        if ($stmt->execute()) {
-            $success_msg = "Your message has been sent successfully!";
-        } else {
-            $error_msg = "Failed to send message. Please try again.";
-        }
-        $stmt->close();
+if (empty($_SESSION['contact_csrf_token'])) {
+    $_SESSION['contact_csrf_token'] = bin2hex(random_bytes(32));
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
+    $subject = trim($_POST['subject'] ?? '');
+    $message = trim($_POST['message'] ?? '');
+    $valid_subjects = ['General Inquiry', 'Feedback', 'Recipe Request', 'Technical Support'];
+
+    if (!$contact_user_id || !$contact_user) {
+        $error_msg = "Please log in before sending a message.";
+    } elseif (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['contact_csrf_token'], $_POST['csrf_token'])) {
+        $error_msg = "Your session expired. Please refresh the page and try again.";
+    } elseif (!in_array($subject, $valid_subjects, true) || $message === '' || strlen($message) > 3000) {
+        $error_msg = "Please choose a subject and enter a message under 3,000 characters.";
     } else {
-        $error_msg = "All fields are required.";
+        $email = $contact_user['email'];
+        $rate_stmt = $conn->prepare("SELECT COUNT(*) AS message_count FROM contact_messages WHERE email = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)");
+        $rate_stmt->bind_param("s", $email);
+        $rate_stmt->execute();
+        $recent_messages = (int)$rate_stmt->get_result()->fetch_assoc()['message_count'];
+
+        if ($recent_messages >= 3) {
+            $error_msg = "You have reached the limit of 3 messages per hour. Please try again later.";
+        } else {
+            $name = trim($contact_user['first_name'] . ' ' . $contact_user['last_name']);
+            $stmt = $conn->prepare("INSERT INTO contact_messages (name, email, subject, message, status) VALUES (?, ?, ?, ?, 'Pending')");
+            $stmt->bind_param("ssss", $name, $email, $subject, $message);
+            if ($stmt->execute()) {
+                $success_msg = "Your message has been sent successfully!";
+            } else {
+                $error_msg = "Failed to send message. Please try again.";
+            }
+            $stmt->close();
+        }
     }
 }
 ?>
@@ -41,18 +67,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
 
 <nav>
     <a href="index.php" class="brand-logo">FoodFusion</a>
+    
     <div class="nav-links">
-        <a href="index.php">Home</a>
-        <a href="about.php">About Us</a>
-        <a href="recipes.php">Recipe Collection</a>
-        <a href="contact.php" style="color: var(--accent-color);">Contact Us</a>
+        <!-- Guest Users (Not Logged In) -->
+        <?php if(!isset($_SESSION['user_id'])): ?>
+            <a href="index.php">Home</a>
+            <a href="about.php">About Us</a>
+            <a href="recipes.php">Recipe Collection</a>
+            <a href="contact.php">Contact Us</a>
+        <?php endif; ?>
+
+        <!-- Member Role -->
+        <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'member'): ?>
+            <a href="index.php">Home</a>
+            <a href="about.php">About Us</a>
+            <a href="recipes.php">Recipe Collection</a>
+            <a href="community_cookbook.php">Community Cookbook</a>
+            <a href="culinary_resources.php">Culinary Resources</a>
+            <a href="educational_resources.php">Educational Resources</a>
+            <a href="contact.php">Contact Us</a>
+        <?php endif; ?>
+
+        <!-- Admin Role -->
+        <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <a href="admin_dashboard.php">Dashboard</a>
+            <a href="manage_cookbook.php">Community Cookbook</a>
+
+            <div class="dropdown">
+                <a href="#">Manage Resources ▼</a>
+                <div class="dropdown-content">
+                    <a href="admin_recipes.php">Recipes Collection</a>
+                    <a href="admin_resources.php">Resources</a>
+                </div>
+            </div>
+
+            <a href="admin_contact.php">Contact Us</a>
+        <?php endif; ?>
     </div>
+
+    <!-- User Auth Area -->
     <span class="user-area">
         <?php if(isset($_SESSION['user_id'])): ?>
-            Welcome, <?php echo htmlspecialchars($_SESSION['user']); ?>
+            Welcome, <?php echo htmlspecialchars($_SESSION['username'] ?? $_SESSION['user']); ?>
             <a href="logout.php" class="cta-btn">Logout</a>
         <?php else: ?>
-            <a href="index.php" class="cta-btn">Login / Register</a>
+            <button onclick="showLogin()">Login</button>
+            <button onclick="showRegister()">Join Us</button>
         <?php endif; ?>
     </span>
 </nav>
@@ -75,41 +135,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
             <div style="background: #FFF5F5; color: #C53030; padding: 10px; border-radius: 4px; margin-bottom: 15px;"><?php echo $error_msg; ?></div>
         <?php endif; ?>
 
-        <form action="contact.php" method="POST">
-            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-                <input type="text" name="name" placeholder="Your Name" required style="flex: 1; padding: 10px; border: 1px solid #CBD5E0; border-radius: 4px;">
-                <input type="email" name="email" placeholder="Your Email" 
-                    value="<?php 
-                        // Login ဝင်ထားလျှင် Email ကို အလိုအလျောက် ဖြည့်ပေးမည်
-                        if(isset($_SESSION['user_id'])) {
-                            $uid = $_SESSION['user_id'];
-                            $u_q = $conn->prepare("SELECT email FROM users WHERE id = ?");
-                            $u_q->bind_param("i", $uid);
-                            $u_q->execute();
-                            $u_res = $u_q->get_result();
-                            if($u_row = $u_res->fetch_assoc()) {
-                                echo htmlspecialchars($u_row['email']);
-                            }
-                        }
-                    ?>" required style="flex: 1; padding: 10px; border: 1px solid #CBD5E0; border-radius: 4px;">
+        <?php if (!$contact_user): ?>
+            <div style="padding: 18px; border-radius: 10px; background: #FFF7F6; color: #475467; text-align: center;">
+                <p style="margin-bottom: 12px;">Please log in to send feedback. Your message will use the email address saved to your account.</p>
+                <button type="button" class="contactLoginContinueBtn" onclick="showLogin()"><i class="fa-solid fa-right-to-bracket"></i> Login to continue</button>
             </div>
-            
-            <!-- Subject Dropdown Menu -->
-            <div style="margin-bottom: 15px;">
-                <select name="subject" required style="width: 100%; padding: 10px; border: 1px solid #CBD5E0; border-radius: 4px; background: #fff;">
-                    <option value="" disabled selected>Select a subject...</option>
-                    <option value="General Inquiry">General Inquiry</option>
-                    <option value="Feedback">Feedback</option>
-                    <option value="Recipe Request">Recipe Request</option>
-                    <option value="Technical Support">Technical Support</option>
-                </select>
-            </div>
+        <?php else: ?>
+            <form action="contact.php" method="POST">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['contact_csrf_token']); ?>">
+                <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                    <input type="text" value="<?php echo htmlspecialchars(trim($contact_user['first_name'] . ' ' . $contact_user['last_name'])); ?>" readonly aria-label="Account name" style="flex: 1; padding: 10px; border: 1px solid #CBD5E0; border-radius: 4px; background: #F7FAFC;">
+                    <input type="email" value="<?php echo htmlspecialchars($contact_user['email']); ?>" readonly aria-label="Account email" style="flex: 1; padding: 10px; border: 1px solid #CBD5E0; border-radius: 4px; background: #F7FAFC;">
+                </div>
 
-            <div style="margin-bottom: 15px;">
-                <textarea name="message" placeholder="Your Message..." rows="4" required style="width: 100%; padding: 10px; border: 1px solid #CBD5E0; border-radius: 4px;"></textarea>
-            </div>
-            <button type="submit" name="send_message" style="background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">Send Message</button>
-        </form>
+                <div style="margin-bottom: 15px;">
+                    <select name="subject" required style="width: 100%; padding: 10px; border: 1px solid #CBD5E0; border-radius: 4px; background: #fff;">
+                        <option value="" disabled selected>Select a subject...</option>
+                        <option value="General Inquiry">General Inquiry</option>
+                        <option value="Feedback">Feedback</option>
+                        <option value="Recipe Request">Recipe Request</option>
+                        <option value="Technical Support">Technical Support</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <textarea name="message" placeholder="Your Message..." rows="4" maxlength="3000" required style="width: 100%; padding: 10px; border: 1px solid #CBD5E0; border-radius: 4px;"></textarea>
+                </div>
+                <button type="submit" name="send_message" style="background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">Send Message</button>
+                <p style="margin-top: 10px; color: #718096; font-size: 12px;">Limit: 3 messages per account each hour.</p>
+            </form>
+        <?php endif; ?>
     </div>
 
     <!-- Login ဝင်ထားပါက ပို့ခဲ့သော မက်ဆေ့ချ်များနှင့် Admin Reply များကို ပြရန် -->
@@ -177,15 +232,66 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
         ?>
     <?php else: ?>
         <div style="background: #edf2f7; padding: 20px; border-radius: 8px; text-align: center;">
-            <p style="margin: 0; color: #4a5568;">Please <a href="index.php" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">login</a> to view your previously sent messages and admin replies.</p>
+            <p style="margin: 0; color: #4a5568;">Please <a href="#loginForm" onclick="showLogin(); return false;" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">login</a> to view your previously sent messages and admin replies.</p>
         </div>
     <?php endif; ?>
 
 </div>
 
-<footer style="text-align: center; padding: 20px; margin-top: 40px; color: #A0AEC0; font-size: 12px;">
-    &copy; 2026 FoodFusion. All Rights Reserved.
+<div id="registerForm" class="popup">
+    <h2>Join Us</h2>
+    <form action="register.php" method="POST">
+        <input type="text" name="first_name" placeholder="First Name" required><br><br>
+        <input type="text" name="last_name" placeholder="Last Name" required><br><br>
+        <input type="email" name="email" placeholder="Email" required><br><br>
+        <input type="password" name="password" placeholder="Password" required><br><br>
+        <button type="submit">Register</button>
+    </form>
+    <br>
+    <button onclick="closeAll()">Close</button>
+</div>
+
+<div id="loginForm" class="popup">
+    <h2>Login</h2>
+    <form action="login.php" method="POST">
+        <input type="email" name="email" placeholder="Email" required><br><br>
+        <input type="password" name="password" placeholder="Password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+    <br>
+    <button onclick="closeAll()">Close</button>
+</div>
+
+<footer>
+    <div class="social-links" style="margin-bottom: 15px;">
+        <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+        <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://pinterest.com" target="_blank"><i class="fa-brands fa-pinterest"></i></a>
+        <a href="https://twitter.com" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+    </div>
+    <div class="footer-links">
+        <a href="privacy.php">Privacy Policy</a> | <a href="cookie_policy.php">Cookie Policy</a>
+    </div>
+    <p style="margin-top: 15px; font-size: 12px; color: #A0AEC0;">&copy; 2026 FoodFusion. All Rights Reserved.</p>
 </footer>
+
+<script>
+function showRegister() {
+    document.getElementById("registerForm").style.display = "block";
+    document.getElementById("loginForm").style.display = "none";
+}
+
+function showLogin() {
+    document.getElementById("loginForm").style.display = "block";
+    document.getElementById("registerForm").style.display = "none";
+}
+
+function closeAll() {
+    document.getElementById("registerForm").style.display = "none";
+    document.getElementById("loginForm").style.display = "none";
+}
+
+</script>
 
 </body>
 </html>

@@ -68,7 +68,13 @@ if ($result->num_rows == 1) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user'] = $user['first_name'];
         $_SESSION['role'] = $user['role'];
-        header("Location: index.php");
+
+        // Role ပေါ်မူတည်၍ Redirect ခွဲခြားခြင်း
+        if ($user['role'] === 'admin') {
+            header("Location: admin_dashboard.php?success=" . urlencode("Welcome Admin, " . $user['first_name']));
+        } else {
+            header("Location: index.php?success=" . urlencode("Login successful! Welcome back, " . $user['first_name']));
+        }
         exit();
     }
 }

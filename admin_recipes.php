@@ -46,8 +46,59 @@ $recipes = $conn->query("SELECT * FROM recipes ORDER BY id DESC");
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body id="communityPageBody">
+<body id="communityPageBody" class="adminRecipesPage">
 
+<nav>
+    <a href="index.php" class="brand-logo">FoodFusion</a>
+    
+    <div class="nav-links">
+        <!-- Guest Users (Not Logged In) -->
+        <?php if(!isset($_SESSION['user_id'])): ?>
+            <a href="index.php">Home</a>
+            <a href="about.php">About Us</a>
+            <a href="recipes.php">Recipe Collection</a>
+            <a href="contact.php">Contact Us</a>
+        <?php endif; ?>
+
+        <!-- Member Role -->
+        <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'member'): ?>
+            <a href="index.php">Home</a>
+            <a href="about.php">About Us</a>
+            <a href="recipes.php">Recipe Collection</a>
+            <a href="community_cookbook.php">Community Cookbook</a>
+            <a href="culinary_resources.php">Culinary Resources</a>
+            <a href="educational_resources.php">Educational Resources</a>
+            <a href="contact.php">Contact Us</a>
+        <?php endif; ?>
+
+        <!-- Admin Role -->
+        <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <a href="admin_dashboard.php">Dashboard</a>
+            <a href="manage_cookbook.php">Community Cookbook</a>
+
+            <div class="dropdown">
+                <a href="#">Manage Resources ▼</a>
+                <div class="dropdown-content">
+                    <a href="admin_recipes.php">Recipes Collection</a>
+                    <a href="admin_resources.php">Resources</a>
+                </div>
+            </div>
+
+            <a href="admin_contact.php">Contact Us</a>
+        <?php endif; ?>
+    </div>
+
+    <!-- User Auth Area -->
+    <span class="user-area">
+        <?php if(isset($_SESSION['user_id'])): ?>
+            Welcome, <?php echo htmlspecialchars($_SESSION['username'] ?? $_SESSION['user']); ?>
+            <a href="logout.php" class="cta-btn">Logout</a>
+        <?php else: ?>
+            <button onclick="showLogin()">Login</button>
+            <button onclick="showRegister()">Join Us</button>
+        <?php endif; ?>
+    </span>
+</nav>
     <!-- Hero Section -->
     <section class="hero community-hero-override">
         <h1>Admin - Manage Recipes</h1>
@@ -55,30 +106,30 @@ $recipes = $conn->query("SELECT * FROM recipes ORDER BY id DESC");
     </section>
 
     <!-- Main Container -->
-    <main class="communityMainWrapper">
+    <main class="communityMainWrapper adminRecipesMain">
 
         <!-- Add Recipe Card -->
-        <section class="communityPostCard communityCreateCard">
+        <section class="communityPostCard communityCreateCard adminRecipeFormCard">
             <h2 class="communityFormTitle">
                 <i class="fa-solid fa-utensils"></i> Add New Recipe
             </h2>
 
             <form method="POST" enctype="multipart/form-data" class="communityCreateForm">
                 <div class="communityFormGroup">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Recipe Title</label>
+                    <label class="adminRecipeLabel">Recipe Title</label>
                     <input type="text" name="title" class="communityInput" placeholder="Recipe Title" required>
                 </div>
 
                 <!-- Cuisine, Dietary & Difficulty Fields with Labels -->
-                <div class="communityFormGroup" style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 150px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Cuisine Type</label>
+                <div class="communityFormGroup adminRecipeFields">
+                    <div class="adminRecipeField">
+                        <label class="adminRecipeLabel">Cuisine Type</label>
                         <input type="text" name="cuisine_type" class="communityInput" placeholder="e.g. Italian, Asian" required>
                     </div>
                     
-                    <div style="flex: 1; min-width: 150px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Dietary Preference</label>
-                        <select name="dietary_preference" class="communitySelect" style="width: 100%;">
+                    <div class="adminRecipeField">
+                        <label class="adminRecipeLabel">Dietary Preference</label>
+                        <select name="dietary_preference" class="communitySelect">
                             <option value="">Select Diet (Optional)</option>
                             <option>Vegetarian</option>
                             <option>Vegan</option>
@@ -88,9 +139,9 @@ $recipes = $conn->query("SELECT * FROM recipes ORDER BY id DESC");
                         </select>
                     </div>
 
-                    <div style="flex: 1; min-width: 150px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Difficulty Level</label>
-                        <select name="difficulty" class="communitySelect" style="width: 100%;" required>
+                    <div class="adminRecipeField">
+                        <label class="adminRecipeLabel">Difficulty Level</label>
+                        <select name="difficulty" class="communitySelect" required>
                             <option value="">Select Difficulty</option>
                             <option>Easy</option>
                             <option>Medium</option>
@@ -100,15 +151,19 @@ $recipes = $conn->query("SELECT * FROM recipes ORDER BY id DESC");
                 </div>
 
                 <div class="communityFormGroup">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Description</label>
+                    <label class="adminRecipeLabel">Description</label>
                     <textarea name="description" class="communityTextarea" placeholder="Description..." rows="4" required></textarea>
                 </div>
 
-                <div class="communityFormGroup communityFileGroup">
+                <div class="communityFormGroup communityFileGroup" data-file-field data-empty-text="No image selected">
                     <label for="recipeImageUpload" class="communityFileLabel">
                         <i class="fa-solid fa-image"></i> Choose Photo
                     </label>
-                    <input type="file" name="image" id="recipeImageUpload" class="communityFileInput" required>
+                    <input type="file" name="image" id="recipeImageUpload" class="communityFileInput" data-file-input accept="image/*" required>
+                    <div class="fileSelectionPreview" data-file-preview aria-live="polite">
+                        <span class="fileSelectionIcon"><i class="fa-regular fa-image"></i></span>
+                        <span class="fileSelectionText"><strong data-file-name>No image selected</strong><small data-file-size>Choose a photo to see its name and size</small></span>
+                    </div>
                 </div>
 
                 <button type="submit" name="add" class="communitySubmitBtn">
@@ -118,9 +173,15 @@ $recipes = $conn->query("SELECT * FROM recipes ORDER BY id DESC");
         </section>
 
         <!-- Recipe List -->
-        <h2 class="section-title">Recipe List</h2>
+        <div class="adminRecipeListHeading">
+            <div>
+                <span class="adminRecipeEyebrow">COLLECTION</span>
+                <h2 class="section-title">Recipe List</h2>
+            </div>
+            <span class="adminRecipeListHint"><i class="fa-solid fa-layer-group"></i> Manage your recipes</span>
+        </div>
 
-        <div class="communityFeedList">
+        <div class="adminRecipeGrid">
             <?php if ($recipes->num_rows === 0): ?>
                 <div class="communityPostCard" style="text-align: center;">
                     <p class="communityPostText">No recipes added yet.</p>
@@ -128,39 +189,37 @@ $recipes = $conn->query("SELECT * FROM recipes ORDER BY id DESC");
             <?php else: ?>
                 <?php while ($row = $recipes->fetch_assoc()): ?>
 
-                    <article class="communityPostCard">
+                    <article class="adminRecipeCard">
 
-                        <div class="communityPostHeader">
-                            <h3 class="communityPostTitle"><?php echo htmlspecialchars($row['title']); ?></h3>
-                            <p class="communityPostMeta">
-                                <span><i class="fa-solid fa-bowl-food"></i> <?php echo htmlspecialchars($row['cuisine_type']); ?></span>
-                                <?php if (!empty($row['dietary_preference'])): ?>
-                                    &nbsp;|&nbsp; <span><i class="fa-solid fa-leaf"></i> <?php echo htmlspecialchars($row['dietary_preference']); ?></span>
-                                <?php endif; ?>
-                                &nbsp;|&nbsp; <span><i class="fa-solid fa-gauge"></i> <?php echo htmlspecialchars($row['difficulty']); ?></span>
-                            </p>
+                        <div class="adminRecipeImage">
+                            <?php if (!empty($row['image'])): ?>
+                                <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
+                            <?php else: ?>
+                                <div class="adminRecipeImagePlaceholder"><i class="fa-solid fa-utensils"></i><span>No image</span></div>
+                            <?php endif; ?>
+                            <span class="adminRecipeDifficulty"><?php echo htmlspecialchars($row['difficulty']); ?></span>
                         </div>
 
-                        <?php if (!empty($row['image'])): ?>
-                            <div class="communityPostImageContainer">
-                                <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" class="communityPostImg" alt="Recipe Image">
+                        <div class="adminRecipeCardContent">
+                            <div class="adminRecipeCardHeader">
+                                <h3><?php echo htmlspecialchars($row['title']); ?></h3>
+                                <span class="adminRecipeCuisine"><i class="fa-solid fa-bowl-food"></i> <?php echo htmlspecialchars($row['cuisine_type']); ?></span>
                             </div>
-                        <?php endif; ?>
+                            <?php if (!empty($row['dietary_preference'])): ?>
+                                <span class="adminRecipeDiet"><i class="fa-solid fa-leaf"></i> <?php echo htmlspecialchars($row['dietary_preference']); ?></span>
+                            <?php endif; ?>
+                            <p class="adminRecipeDescription"><?php echo nl2br(htmlspecialchars($row['description'])); ?></p>
 
-                        <div class="communityPostBody">
-                            <p class="communityPostText"><?php echo nl2br(htmlspecialchars($row['description'])); ?></p>
-                        </div>
-
-                        <!-- Management Bar (Edit/Delete Links) -->
-                        <div class="communityPostManageBar">
-                            <a href="edit_recipe.php?id=<?php echo $row['id']; ?>" class="communityEditBtn">
-                                <i class="fa-solid fa-pen-to-square"></i> Edit
-                            </a>
-                            <a href="delete_recipe.php?id=<?php echo $row['id']; ?>" 
-                               onclick="return confirm('Delete this recipe?')" 
-                               class="communityDeleteBtn">
-                               <i class="fa-solid fa-trash-can"></i> Delete
-                            </a>
+                            <div class="adminRecipeActions">
+                                <a href="edit_recipes.php?id=<?php echo (int)$row['id']; ?>" class="adminRecipeEditBtn">
+                                    <i class="fa-solid fa-pen-to-square"></i> Edit recipe
+                                </a>
+                                <a href="delete_recipe.php?id=<?php echo $row['id']; ?>"
+                                   onclick="return confirm('Delete this recipe?')"
+                                   class="adminRecipeDeleteBtn">
+                                   <i class="fa-solid fa-trash-can"></i> Delete
+                                </a>
+                            </div>
                         </div>
 
                     </article>
@@ -171,5 +230,6 @@ $recipes = $conn->query("SELECT * FROM recipes ORDER BY id DESC");
 
     </main>
 
+<script src="file-upload.js"></script>
 </body>
 </html>

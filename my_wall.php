@@ -1,8 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Community Cookbook - My Wall</title>
-</head><?php
+<?php
 session_start();
 include "db.php";
 
@@ -64,6 +60,58 @@ $posts = $stmt->get_result();
 </head>
 <body id="communityPageBody">
 
+<nav>
+    <a href="index.php" class="brand-logo">FoodFusion</a>
+    
+    <div class="nav-links">
+        <!-- Guest Users (Not Logged In) -->
+        <?php if(!isset($_SESSION['user_id'])): ?>
+            <a href="index.php">Home</a>
+            <a href="about.php">About Us</a>
+            <a href="recipes.php">Recipe Collection</a>
+            <a href="contact.php">Contact Us</a>
+        <?php endif; ?>
+
+        <!-- Member Role -->
+        <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'member'): ?>
+            <a href="index.php">Home</a>
+            <a href="about.php">About Us</a>
+            <a href="recipes.php">Recipe Collection</a>
+            <a href="community_cookbook.php">Community Cookbook</a>
+            <a href="culinary_resources.php">Culinary Resources</a>
+            <a href="educational_resources.php">Educational Resources</a>
+            <a href="contact.php">Contact Us</a>
+        <?php endif; ?>
+
+        <!-- Admin Role -->
+        <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <a href="admin_dashboard.php">Dashboard</a>
+            <a href="manage_cookbook.php">Community Cookbook</a>
+
+            <div class="dropdown">
+                <a href="#">Manage Resources ▼</a>
+                <div class="dropdown-content">
+                    <a href="admin_recipes.php">Recipes Collection</a>
+                    <a href="admin_resources.php">Resources</a>
+                </div>
+            </div>
+
+            <a href="admin_contact.php">Contact Us</a>
+        <?php endif; ?>
+    </div>
+
+    <!-- User Auth Area -->
+    <span class="user-area">
+        <?php if(isset($_SESSION['user_id'])): ?>
+            Welcome, <?php echo htmlspecialchars($_SESSION['username'] ?? $_SESSION['user']); ?>
+            <a href="logout.php" class="cta-btn">Logout</a>
+        <?php else: ?>
+            <button onclick="showLogin()">Login</button>
+            <button onclick="showRegister()">Join Us</button>
+        <?php endif; ?>
+    </span>
+</nav>
+
     <!-- Hero Section with Tab Navigation -->
     <section class="hero community-hero-override">
         <h1>Community Cookbook - My Wall</h1>
@@ -100,11 +148,15 @@ $posts = $stmt->get_result();
                     <textarea name="content" class="communityTextarea" placeholder="Share your recipe, cooking tip or culinary experience..." rows="4" required></textarea>
                 </div>
 
-                <div class="communityFormGroup communityFileGroup">
+                <div class="communityFormGroup communityFileGroup" data-file-field data-empty-text="No photo selected">
                     <label for="postImageUpload" class="communityFileLabel">
                         <i class="fa-solid fa-image"></i> Choose Photo
                     </label>
-                    <input type="file" name="image" id="postImageUpload" class="communityFileInput">
+                    <input type="file" name="image" id="postImageUpload" class="communityFileInput" data-file-input accept="image/*">
+                    <div class="fileSelectionPreview" data-file-preview aria-live="polite">
+                        <span class="fileSelectionIcon"><i class="fa-regular fa-image"></i></span>
+                        <span class="fileSelectionText"><strong data-file-name>No photo selected</strong><small data-file-size>Choose a photo to see its name and size</small></span>
+                    </div>
                 </div>
 
                 <button type="submit" name="submit_post" class="communitySubmitBtn">
@@ -160,5 +212,6 @@ $posts = $stmt->get_result();
 
     </main>
 
+<script src="file-upload.js"></script>
 </body>
 </html>
