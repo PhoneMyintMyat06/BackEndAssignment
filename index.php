@@ -54,10 +54,14 @@ $cookie_accepted = isset($_COOKIE['foodfusion_cookie_accepted']) ? true : false;
     </script>
 <?php endif; ?>
 
-<nav>
+<nav class="home-nav">
     <a href="index.php" class="brand-logo">FoodFusion</a>
+
+    <button class="mobile-nav-toggle" type="button" aria-expanded="false" aria-controls="homeNavLinks" aria-label="Open navigation menu">
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+    </button>
     
-    <div class="nav-links">
+    <div class="nav-links" id="homeNavLinks">
         <!-- Guest Users (Not Logged In) -->
         <?php if(!isset($_SESSION['user_id'])): ?>
             <a href="index.php" class="active-nav">Home</a>
@@ -135,15 +139,32 @@ $cookie_accepted = isset($_COOKIE['foodfusion_cookie_accepted']) ? true : false;
         </div>
     </main>
 
-    <aside class="sidebar-box">
+    <aside class="sidebar-box homepage-events">
         <h4 class="section-title">Upcoming Events</h4>
-        <div class="event-item">
-            <h5>Summer Pastry Workshop</h5>
-            <p style="font-size: 12px; color: var(--text-muted);"><i class="fa-regular fa-calendar"></i> July 25, 2026</p>
-        </div>
-        <div class="event-item">
-            <h5>Artisan Pasta Making</h5>
-            <p style="font-size: 12px; color: var(--text-muted);"><i class="fa-regular fa-calendar"></i> August 02, 2026</p>
+        <div class="event-carousel" aria-roledescription="carousel" aria-label="Upcoming cooking events">
+            <div class="event-carousel-track" aria-live="polite">
+                <div class="event-item" role="group" aria-roledescription="slide" aria-label="1 of 4">
+                    <h5>Autumn Harvest Cooking Class</h5>
+                    <p style="font-size: 12px; color: var(--text-muted);"><i class="fa-regular fa-calendar"></i> October 18, 2026</p>
+                </div>
+                <div class="event-item" role="group" aria-roledescription="slide" aria-label="2 of 4">
+                    <h5>International Street Food Night</h5>
+                    <p style="font-size: 12px; color: var(--text-muted);"><i class="fa-regular fa-calendar"></i> October 31, 2026</p>
+                </div>
+                <div class="event-item" role="group" aria-roledescription="slide" aria-label="3 of 4">
+                    <h5>Holiday Baking Workshop</h5>
+                    <p style="font-size: 12px; color: var(--text-muted);"><i class="fa-regular fa-calendar"></i> November 14, 2026</p>
+                </div>
+                <div class="event-item" role="group" aria-roledescription="slide" aria-label="4 of 4">
+                    <h5>Fresh Pasta Masterclass</h5>
+                    <p style="font-size: 12px; color: var(--text-muted);"><i class="fa-regular fa-calendar"></i> December 05, 2026</p>
+                </div>
+            </div>
+            <div class="event-carousel-controls">
+                <button type="button" class="event-carousel-button" data-event-direction="previous" aria-label="Previous event"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+                <span class="event-carousel-status" aria-live="polite">1 / 4</span>
+                <button type="button" class="event-carousel-button" data-event-direction="next" aria-label="Next event"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+            </div>
         </div>
     </aside>
 </div>
@@ -218,6 +239,60 @@ function acceptCookies() {
     document.cookie = "foodfusion_cookie_accepted=true; max-age=" + 60*60*24*30 + "; path=/";
     document.getElementById('cookieBanner').style.display = 'none';
 }
+
+const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+const homeNavLinks = document.getElementById('homeNavLinks');
+mobileNavToggle.addEventListener('click', () => {
+    const isOpen = mobileNavToggle.getAttribute('aria-expanded') === 'true';
+    mobileNavToggle.setAttribute('aria-expanded', String(!isOpen));
+    mobileNavToggle.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
+    homeNavLinks.classList.toggle('is-open', !isOpen);
+});
+homeNavLinks.addEventListener('click', (event) => {
+    if (event.target.closest('a')) {
+        mobileNavToggle.setAttribute('aria-expanded', 'false');
+        mobileNavToggle.setAttribute('aria-label', 'Open navigation menu');
+        homeNavLinks.classList.remove('is-open');
+    }
+});
+
+const eventCarousel = document.querySelector('.event-carousel');
+const eventSlides = Array.from(eventCarousel.querySelectorAll('.event-item'));
+const eventTrack = eventCarousel.querySelector('.event-carousel-track');
+const eventStatus = eventCarousel.querySelector('.event-carousel-status');
+let currentEvent = 0;
+let eventTimer;
+
+function showEvent(index) {
+    currentEvent = (index + eventSlides.length) % eventSlides.length;
+    eventTrack.style.transform = `translateX(-${currentEvent * 100}%)`;
+    eventStatus.textContent = `${currentEvent + 1} / ${eventSlides.length}`;
+    eventSlides.forEach((slide, slideIndex) => {
+        slide.setAttribute('aria-hidden', String(slideIndex !== currentEvent));
+    });
+}
+
+function startEventRotation() {
+    window.clearInterval(eventTimer);
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        eventTimer = window.setInterval(() => showEvent(currentEvent + 1), 5000);
+    }
+}
+
+eventCarousel.querySelectorAll('[data-event-direction]').forEach((button) => {
+    button.addEventListener('click', () => {
+        showEvent(currentEvent + (button.dataset.eventDirection === 'next' ? 1 : -1));
+        startEventRotation();
+    });
+});
+eventCarousel.addEventListener('mouseenter', () => window.clearInterval(eventTimer));
+eventCarousel.addEventListener('mouseleave', startEventRotation);
+eventCarousel.addEventListener('focusin', () => window.clearInterval(eventTimer));
+eventCarousel.addEventListener('focusout', (event) => {
+    if (!eventCarousel.contains(event.relatedTarget)) startEventRotation();
+});
+showEvent(0);
+startEventRotation();
 </script>
 
 </body>
