@@ -1047,7 +1047,7 @@ footer {
    ADMIN CONTACT MESSAGES STYLES
    ========================================================================== */
 
-.active-nav {
+.nav-links a.active-nav {
     color: var(--accent-color) !important;
 }
 
@@ -2982,6 +2982,62 @@ img, video, canvas, svg {
     margin-bottom: 18px;
 }
 
+/* Match My Wall post cards to the Community Cookbook layout. */
+.myWallPage .communityFeedList {
+    max-width: 760px;
+    margin-right: auto;
+    margin-left: auto;
+    gap: 24px;
+}
+
+.myWallPage .communityFeedList > article.communityPostCard {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 27px 28px;
+    border: 1px solid #E6EBF2;
+    border-radius: 19px;
+    background: #FFFFFF;
+    box-shadow: 0 8px 26px rgba(45, 55, 72, 0.065);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.myWallPage .communityFeedList > article.communityPostCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 34px rgba(45, 55, 72, 0.11);
+}
+
+.myWallPage .communityFeedList > article .communityPostHeader {
+    margin-bottom: 17px;
+}
+
+.myWallPage .communityFeedList > article .communityPostTitle {
+    font-size: 21px;
+}
+
+.myWallPage .communityFeedList > article .communityPostImageContainer {
+    width: calc(100% + 56px);
+    height: 320px;
+    max-height: 320px;
+    margin: 0 -28px 20px;
+    border: 0;
+    background: #F2F4F7;
+}
+
+.myWallPage .communityFeedList > article .communityPostImg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    background: #F2F4F7;
+}
+
+.myWallPage .communityFeedList > article .communityPostBody {
+    margin-bottom: 18px;
+}
+
 .communityEmptyState {
     padding: 48px 20px;
     border: 1px dashed #D0D5DD;
@@ -3026,6 +3082,17 @@ img, video, canvas, svg {
 
     .communityCookbookPage .communityPostImageContainer,
     .manageCookbookPage .communityPostImageContainer {
+        width: calc(100% + 40px);
+        height: 230px;
+        max-height: 230px;
+        margin: 0 -20px 18px;
+    }
+
+    .myWallPage .communityFeedList > article.communityPostCard {
+        padding: 22px 20px;
+    }
+
+    .myWallPage .communityFeedList > article .communityPostImageContainer {
         width: calc(100% + 40px);
         height: 230px;
         max-height: 230px;

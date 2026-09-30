@@ -77,9 +77,9 @@ $recipes = $conn->query("SELECT * FROM recipes ORDER BY id DESC");
             <a href="manage_cookbook.php">Community Cookbook</a>
 
             <div class="dropdown">
-                <a href="#">Manage Resources ▼</a>
+                <a href="#" class="active-nav">Manage Resources ▼</a>
                 <div class="dropdown-content">
-                    <a href="admin_recipes.php">Recipes Collection</a>
+                    <a href="admin_recipes.php" class="active-nav">Recipes Collection</a>
                     <a href="admin_resources.php">Resources</a>
                 </div>
             </div>

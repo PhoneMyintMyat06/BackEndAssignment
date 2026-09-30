@@ -62,7 +62,7 @@ $result = $conn->query($sql);
                 </div>
             </div>
 
-            <a href="admin_contact.php">Contact Us</a>
+            <a href="admin_contact.php" class="active-nav">Contact Us</a>
         <?php endif; ?>
     </div>
 

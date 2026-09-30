@@ -113,7 +113,7 @@ $posts = $conn->query($sql);
         <!-- Admin Role -->
         <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
             <a href="admin_dashboard.php">Dashboard</a>
-            <a href="manage_cookbook.php">Community Cookbook</a>
+            <a href="manage_cookbook.php" class="active-nav">Community Cookbook</a>
 
             <div class="dropdown">
                 <a href="#">Manage Resources ▼</a>

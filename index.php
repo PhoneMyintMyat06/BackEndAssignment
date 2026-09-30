@@ -1,7 +1,7 @@
 <?php 
 session_start(); 
 
-// Cookie လက်ခံမှုကို PHP ဘက်မှပါ စစ်ဆေးခြင်း
+// Check cookie acceptance on the PHP side as well.
 $cookie_accepted = isset($_COOKIE['foodfusion_cookie_accepted']) ? true : false;
 ?>
 
@@ -60,7 +60,7 @@ $cookie_accepted = isset($_COOKIE['foodfusion_cookie_accepted']) ? true : false;
     <div class="nav-links">
         <!-- Guest Users (Not Logged In) -->
         <?php if(!isset($_SESSION['user_id'])): ?>
-            <a href="index.php">Home</a>
+            <a href="index.php" class="active-nav">Home</a>
             <a href="about.php">About Us</a>
             <a href="recipes.php">Recipe Collection</a>
             <a href="contact.php">Contact Us</a>
@@ -68,7 +68,7 @@ $cookie_accepted = isset($_COOKIE['foodfusion_cookie_accepted']) ? true : false;
 
         <!-- Member Role -->
         <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'member'): ?>
-            <a href="index.php">Home</a>
+            <a href="index.php" class="active-nav">Home</a>
             <a href="about.php">About Us</a>
             <a href="recipes.php">Recipe Collection</a>
             <a href="community_cookbook.php">Community Cookbook</a>

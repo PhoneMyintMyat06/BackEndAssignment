@@ -49,7 +49,7 @@ $resources = $stmt->get_result();
             <a href="recipes.php">Recipe Collection</a>
             <a href="community_cookbook.php">Community Cookbook</a>
             <a href="culinary_resources.php">Culinary Resources</a>
-            <a href="educational_resources.php">Educational Resources</a>
+            <a href="educational_resources.php" class="active-nav">Educational Resources</a>
             <a href="contact.php">Contact Us</a>
         <?php endif; ?>
 

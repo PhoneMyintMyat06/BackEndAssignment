@@ -74,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
             <a href="index.php">Home</a>
             <a href="about.php">About Us</a>
             <a href="recipes.php">Recipe Collection</a>
-            <a href="contact.php">Contact Us</a>
+            <a href="contact.php" class="active-nav">Contact Us</a>
         <?php endif; ?>
 
         <!-- Member Role -->
@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
             <a href="community_cookbook.php">Community Cookbook</a>
             <a href="culinary_resources.php">Culinary Resources</a>
             <a href="educational_resources.php">Educational Resources</a>
-            <a href="contact.php">Contact Us</a>
+            <a href="contact.php" class="active-nav">Contact Us</a>
         <?php endif; ?>
 
         <!-- Admin Role -->
@@ -124,7 +124,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
 
 <div class="main-container" style="display: flex; flex-direction: column; max-width: 900px; margin: 30px auto; padding: 0 20px;">
     
-    <!-- မက်ဆေ့ချ် အသစ်ပို့ရန် Form -->
+    <!-- Form for sending a new message. -->
     <div style="background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 40px;">
         <h3 style="margin-bottom: 20px;">Send Us a Message</h3>
 
@@ -167,7 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
         <?php endif; ?>
     </div>
 
-    <!-- Login ဝင်ထားပါက ပို့ခဲ့သော မက်ဆေ့ချ်များနှင့် Admin Reply များကို ပြရန် -->
+    <!-- Show submitted messages and admin replies when the user is logged in. -->
     <?php if (isset($_SESSION['user_id'])): ?>
         <?php
         $uid = $_SESSION['user_id'];

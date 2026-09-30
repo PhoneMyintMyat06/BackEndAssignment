@@ -84,7 +84,7 @@ $users = $conn->query("SELECT id, first_name, last_name, email, role FROM users 
 
         <!-- Admin Role -->
         <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-            <a href="admin_dashboard.php">Dashboard</a>
+            <a href="admin_dashboard.php" class="active-nav">Dashboard</a>
             <a href="manage_cookbook.php">Community Cookbook</a>
 
             <div class="dropdown">

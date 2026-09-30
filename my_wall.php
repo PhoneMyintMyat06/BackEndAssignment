@@ -58,7 +58,7 @@ $posts = $stmt->get_result();
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body id="communityPageBody">
+<body id="communityPageBody" class="myWallPage">
 
 <nav>
     <a href="index.php" class="brand-logo">FoodFusion</a>
@@ -77,7 +77,7 @@ $posts = $stmt->get_result();
             <a href="index.php">Home</a>
             <a href="about.php">About Us</a>
             <a href="recipes.php">Recipe Collection</a>
-            <a href="community_cookbook.php">Community Cookbook</a>
+            <a href="community_cookbook.php" class="active-nav">Community Cookbook</a>
             <a href="culinary_resources.php">Culinary Resources</a>
             <a href="educational_resources.php">Educational Resources</a>
             <a href="contact.php">Contact Us</a>
