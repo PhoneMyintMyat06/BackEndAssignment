@@ -2,7 +2,7 @@
 session_start();
 include "db.php";
 
-// Admin ဟုတ်မဟုတ် စစ်ဆေးခြင်း
+// Check whether the user is an admin.
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: index.php");
     exit();

@@ -2,7 +2,7 @@
 session_start();
 require_once 'db.php';
 
-// Admin မဟုတ်ပါက Login Page သို့ ပြန်ညွှန်းမည်
+// Redirect non-admin users to the login page.
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
     exit();
@@ -15,7 +15,7 @@ $error = '';
 if (isset($_GET['delete_post_id'])) {
     $delete_post_id = intval($_GET['delete_post_id']);
 
-    // ပုံပါဝင်ပါက Server သဲထဲမှ ပုံကို ရှာပြီး ဖျက်ပစ်မည်
+    // If the post has an image, find and delete it from the server.
     $stmt = $conn->prepare("SELECT image FROM community_posts WHERE id = ?");
     $stmt->bind_param("i", $delete_post_id);
     $stmt->execute();
@@ -24,7 +24,7 @@ if (isset($_GET['delete_post_id'])) {
         unlink("uploads/" . $res['image']);
     }
 
-    // community_likes, community_comments နှင့် community_posts တို့မှ ဒေတာများကို ဖျက်မည်
+    // Delete related data from community_likes, community_comments, and community_posts.
     $conn->query("DELETE FROM community_likes WHERE post_id = $delete_post_id");
     $conn->query("DELETE FROM community_comments WHERE post_id = $delete_post_id");
 

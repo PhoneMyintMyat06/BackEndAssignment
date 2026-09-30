@@ -2,21 +2,21 @@
 session_start();
 require_once 'db.php';
 
-// Admin မဟုတ်ပါက Login သို့ ပြန်ညွှန်းမည်
+// Redirect non-admin users to the login page.
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
     exit();
 }
 
-// Analytics / Stats များ ရယူခြင်း
+// Retrieve analytics and statistics.
 $total_users = $conn->query("SELECT COUNT(*) AS count FROM users")->fetch_assoc()['count'] ?? 0;
 $total_posts = $conn->query("SELECT COUNT(*) AS count FROM community_posts")->fetch_assoc()['count'] ?? 0;
 
-// Recipes နှင့် Resources အရေအတွက်များ ရယူခြင်း
+// Retrieve recipe and resource counts.
 $total_recipes = $conn->query("SELECT COUNT(*) AS count FROM recipes")->fetch_assoc()['count'] ?? 0;
 $total_resources = $conn->query("SELECT COUNT(*) AS count FROM resources")->fetch_assoc()['count'] ?? 0;
 
-// Registered Users List ရယူခြင်း
+// Retrieve the registered users list.
 $users = $conn->query("SELECT id, first_name, last_name, email, role FROM users ORDER BY id DESC");
 ?>
 
@@ -26,7 +26,7 @@ $users = $conn->query("SELECT id, first_name, last_name, email, role FROM users 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <!-- CSS ဖိုင်နှင့် ချိတ်ဆက်ခြင်း -->
+    <!-- Link the CSS file. -->
     <link rel="stylesheet" href="style.css">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">

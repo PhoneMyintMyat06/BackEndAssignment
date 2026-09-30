@@ -2,16 +2,16 @@
 session_start();
 include "db.php";
 
-// Cookie လက်ခံမှုကို စစ်ဆေးခြင်း
+// Check cookie acceptance.
 $cookie_accepted = isset($_COOKIE['foodfusion_cookie_accepted']) ? true : false;
 
-// Search နှင့် Filter Input များကို ရယူခြင်း
+// Get the search and filter inputs.
 $search = $_GET['search'] ?? "";
 $cuisine = $_GET['cuisine'] ?? "";
 $dietary = $_GET['dietary'] ?? "";
 $difficulty = $_GET['difficulty'] ?? "";
 
-// SQL Query ပြင်ဆင်ခြင်း
+// Prepare the SQL query.
 $sql = "SELECT * FROM recipes WHERE 1=1";
 $params = [];
 $types = "";
@@ -53,7 +53,7 @@ if (!empty($params)) {
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Unique Cuisine Options ရယူခြင်း
+// Retrieve the unique cuisine options.
 $cuisines_res = $conn->query("SELECT DISTINCT cuisine_type FROM recipes WHERE cuisine_type IS NOT NULL AND cuisine_type != ''");
 ?>
 

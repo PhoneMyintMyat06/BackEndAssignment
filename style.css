@@ -398,7 +398,7 @@ footer {
     color: var(--accent-color) !important;
 }
 
-/* Copyright စာတန်း */
+/* Copyright text */
 .footer-copyright, footer p {
     margin-top: 20px; 
     font-size: 13px; 
@@ -1337,7 +1337,7 @@ img, video, canvas, svg {
 /* Fix Full Width Image Issue */
 .recipe-img-holder {
     width: 100% !important;
-    height: 200px !important; /* Image Height ကို ၂၀၀px စိစစ်သတ်မှတ်ခြင်း */
+    height: 200px !important; /* Set the image height to 200px. */
     overflow: hidden;
     background-color: #f7fafc;
 }
@@ -1345,7 +1345,7 @@ img, video, canvas, svg {
 .recipe-img-holder img {
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover !important; /* ပုံမရှုံ့ဘဲ ကွက်တိဝင်စေရန် */
+    object-fit: cover !important; /* Fill the container without distorting the image. */
 }
 
 /* Responsive Fixes */
