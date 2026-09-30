@@ -1,4 +1,8 @@
-<?php session_start(); ?>
+<?php session_start(); 
+
+// Check cookie acceptance on the PHP side as well.
+$cookie_accepted = isset($_COOKIE['foodfusion_cookie_accepted']) ? true : false;
+?>
 
 <!DOCTYPE html>
 <html>
@@ -146,6 +150,14 @@
     <button onclick="closeAll()">Close</button>
 </div>
 
+<!-- Cookie Banner -->
+<div class="cookie-banner" id="cookieBanner" style="display: <?php echo $cookie_accepted ? 'none' : 'flex'; ?>;">
+    <p style="font-size: 14px;">We use cookies to improve your user experience. 
+        <a href="cookie_policy.php" style="color: var(--accent-color); text-decoration: none;">Cookie Policy</a>
+    </p>
+    <button onclick="acceptCookies()">Accept</button>
+</div>
+
 <footer>
     <div class="social-links" style="margin-bottom: 15px;">
         <a href="#"><i class="fa-brands fa-facebook"></i></a>
@@ -174,6 +186,11 @@ function showLogin() {
 function closeAll() {
     document.getElementById("registerForm").style.display = "none";
     document.getElementById("loginForm").style.display = "none";
+}
+
+function acceptCookies() {
+    document.cookie = "foodfusion_cookie_accepted=true; max-age=" + 60*60*24*30 + "; path=/";
+    document.getElementById('cookieBanner').style.display = 'none';
 }
 </script>
 

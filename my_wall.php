@@ -2,6 +2,9 @@
 session_start();
 include "db.php";
 
+// Check cookie acceptance on the PHP side as well.
+$cookie_accepted = isset($_COOKIE['foodfusion_cookie_accepted']) ? true : false;
+
 /* Only logged-in users can access My Wall */
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
@@ -211,6 +214,34 @@ $posts = $stmt->get_result();
         </div>
 
     </main>
+
+<!-- Cookie Banner -->
+<div class="cookie-banner" id="cookieBanner" style="display: <?php echo $cookie_accepted ? 'none' : 'flex'; ?>;">
+    <p style="font-size: 14px;">We use cookies to improve your user experience. 
+        <a href="cookie_policy.php" style="color: var(--accent-color); text-decoration: none;">Cookie Policy</a>
+    </p>
+    <button onclick="acceptCookies()">Accept</button>
+</div>
+
+<footer>
+    <div class="social-links" style="margin-bottom: 15px;">
+        <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+        <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://pinterest.com" target="_blank"><i class="fa-brands fa-pinterest"></i></a>
+        <a href="https://twitter.com" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+    </div>
+    <div class="footer-links">
+        <a href="privacy.php">Privacy Policy</a> | <a href="cookie_policy.php">Cookie Policy</a>
+    </div>
+    <p style="margin-top: 15px; font-size: 12px; color: #A0AEC0;">&copy; 2026 FoodFusion. All Rights Reserved.</p>
+</footer>
+
+<script>
+function acceptCookies() {
+    document.cookie = "foodfusion_cookie_accepted=true; max-age=" + 60*60*24*30 + "; path=/";
+    document.getElementById('cookieBanner').style.display = 'none';
+}
+</script>
 
 <script src="file-upload.js"></script>
 </body>
