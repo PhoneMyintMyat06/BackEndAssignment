@@ -202,6 +202,13 @@ function showLogin() {
     document.getElementById("loginForm").style.display = "block";
     document.getElementById("registerForm").style.display = "none";
 }
+
+// Keep the login form open after a failed login redirect.
+const loginUrlParams = new URLSearchParams(window.location.search);
+if (loginUrlParams.get("show_login") === "1") {
+    showLogin();
+}
+
 function closeAll() {
     document.getElementById("registerForm").style.display = "none";
     document.getElementById("loginForm").style.display = "none";

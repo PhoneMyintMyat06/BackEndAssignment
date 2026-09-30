@@ -16,7 +16,7 @@ if (!isset($_SESSION['failed_attempts'])) {
 if ($_SESSION['failed_attempts'] >= 3) {
     $time_passed = time() - $_SESSION['lock_time'];
     if ($time_passed < 180) {
-        header("Location: index.php?error=" . urlencode("Too many failed attempts. Please try again after 3 minutes."));
+        header("Location: index.php?error=" . urlencode("Too many failed attempts. Please try again after 3 minutes.") . "&show_login=1");
         exit();
     } else {
         $_SESSION['failed_attempts'] = 0;
@@ -43,7 +43,7 @@ if ($result->num_rows == 1) {
         $lock_data = $lock_stmt->get_result()->fetch_assoc();
 
         if ($lock_data['seconds_passed'] < 180) {
-            header("Location: index.php?error=" . urlencode("Your account is locked for 3 minutes due to multiple failed attempts."));
+            header("Location: index.php?error=" . urlencode("Your account is locked for 3 minutes due to multiple failed attempts.") . "&show_login=1");
             exit();
         } else {
             // ၃ မိနစ်ကျော်သွားပါက အမှားအရေအတွက်ကို ပြန်လည် 0 သို့ ဖြေလျှော့ပေးခြင်း
@@ -97,9 +97,9 @@ if ($result->num_rows == 1) {
 // ၃ ကြိမ်ပြည့်ပါက Lock ချရန်နှင့် မပြည့်သေးပါက ကျန်ရှိသည့်အကြိမ်အရေအတွက် ပြသရန်
 if ($current_attempts >= 3) {
     $_SESSION['lock_time'] = time();
-    header("Location: index.php?error=" . urlencode("Invalid login details. Your account/session is locked for 3 minutes."));
+    header("Location: index.php?error=" . urlencode("Invalid login details. Your account/session is locked for 3 minutes.") . "&show_login=1");
 } else {
-    header("Location: index.php?error=" . urlencode("Invalid email or password. Attempt $current_attempts of 3."));
+    header("Location: index.php?error=" . urlencode("Invalid email or password. Attempt $current_attempts of 3.") . "&show_login=1");
 }
 exit();
 ?>
