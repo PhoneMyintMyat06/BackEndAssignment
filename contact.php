@@ -123,10 +123,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
     <p>Have questions or feedback? Reach out to us or check your message status below.</p>
 </div>
 
-<div class="main-container" style="display: flex; flex-direction: column; max-width: 900px; margin: 30px auto; padding: 0 20px;">
+<div class="main-container" style="display: flex; flex-direction: column; width: 100%; max-width: 900px; margin: 30px auto; padding: 0 20px; box-sizing: border-box;">
     
-    <!-- Form for sending a new message. -->
-    <div style="background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 40px;">
+    <!-- Form for sending a new message -->
+    <div style="background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 40px; width: 100%; box-sizing: border-box;">
         <h3 style="margin-bottom: 20px;">Send Us a Message</h3>
 
         <?php if(!empty($success_msg)): ?>
@@ -160,7 +160,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
                 </div>
 
                 <div style="margin-bottom: 15px;">
-                    <textarea name="message" placeholder="Your Message..." rows="4" maxlength="3000" required style="width: 100%; padding: 10px; border: 1px solid #CBD5E0; border-radius: 4px;"></textarea>
+                    <textarea name="message" placeholder="Your Message..." rows="4" maxlength="3000" required style="width: 100%; padding: 10px; border: 1px solid #CBD5E0; border-radius: 4px; box-sizing: border-box;"></textarea>
                 </div>
                 <button type="submit" name="send_message" style="background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">Send Message</button>
                 <p style="margin-top: 10px; color: #718096; font-size: 12px;">Limit: 3 messages per account each hour.</p>
@@ -168,7 +168,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
         <?php endif; ?>
     </div>
 
-    <!-- Show submitted messages and admin replies when the user is logged in. -->
+    <!-- Show submitted messages and admin replies when the user is logged in -->
     <?php if (isset($_SESSION['user_id'])): ?>
         <?php
         $uid = $_SESSION['user_id'];
@@ -188,7 +188,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
             $messages_result = $stmt_m->get_result();
             
             if ($messages_result->num_rows > 0) {
-                echo '<div style="background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">';
+                echo '<div style="background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box;">';
                 echo '<h3>Your Sent Messages & Admin Replies</h3>';
                 echo '<div style="overflow-x: auto;"><table style="width: 100%; margin-top: 15px; border-collapse: collapse;">';
                 echo '<tr style="background: #f7fafc; border-bottom: 2px solid #e2e8f0; text-align: left;">';
