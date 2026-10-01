@@ -128,7 +128,7 @@ $cuisines_res = $conn->query("SELECT DISTINCT cuisine_type FROM recipes WHERE cu
         <!-- Admin Role -->
         <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
             <a href="admin_dashboard.php">Dashboard</a>
-            <a href="manage_cookbook.php">Community Cookbook</a>
+            <a href="manage_cookbook.php">Manage Cookbook</a>
             <div class="dropdown">
                 <a href="#">Manage Resources ▼</a>
                 <div class="dropdown-content">
