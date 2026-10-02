@@ -2,7 +2,7 @@
 session_start();
 require_once 'db.php';
 
-// Admin မဟုတ်ပါက Login Page သို့ ပြန်ညွှန်းမည်
+// Redirect non-admin users to the login page.
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
     exit();
@@ -15,7 +15,7 @@ $error = '';
 if (isset($_GET['delete_post_id'])) {
     $delete_post_id = intval($_GET['delete_post_id']);
 
-    // ပုံပါဝင်ပါက Server သဲထဲမှ ပုံကို ရှာပြီး ဖျက်ပစ်မည်
+    // If the post has an image, find and delete it from the server.
     $stmt = $conn->prepare("SELECT image FROM community_posts WHERE id = ?");
     $stmt->bind_param("i", $delete_post_id);
     $stmt->execute();
@@ -24,14 +24,14 @@ if (isset($_GET['delete_post_id'])) {
         unlink("uploads/" . $res['image']);
     }
 
-    // community_likes, community_comments နှင့် community_posts တို့မှ ဒေတာများကို ဖျက်မည်
+    // Delete related data from community_likes, community_comments, and community_posts.
     $conn->query("DELETE FROM community_likes WHERE post_id = $delete_post_id");
     $conn->query("DELETE FROM community_comments WHERE post_id = $delete_post_id");
 
     $del_stmt = $conn->prepare("DELETE FROM community_posts WHERE id = ?");
     $del_stmt->bind_param("i", $delete_post_id);
     if ($del_stmt->execute()) {
-        header("Location: manage_cookbook.php?msg=" . urlencode("Member post and all associated comments/likes deleted successfully!"));
+        header("Location: manage_community.php?msg=" . urlencode("Member post and all associated comments/likes deleted successfully!"));
         exit();
     } else {
         $error = "Failed to delete post.";
@@ -44,7 +44,7 @@ if (isset($_GET['delete_comment_id'])) {
     $del_comm = $conn->prepare("DELETE FROM community_comments WHERE id = ?");
     $del_comm->bind_param("i", $comment_id);
     if ($del_comm->execute()) {
-        header("Location: manage_cookbook.php?msg=" . urlencode("Comment deleted successfully!"));
+        header("Location: manage_community.php?msg=" . urlencode("Comment deleted successfully!"));
         exit();
     } else {
         $error = "Failed to delete comment.";
@@ -55,7 +55,7 @@ if (isset($_GET['delete_comment_id'])) {
 if (isset($_GET['clear_likes_id'])) {
     $post_id = intval($_GET['clear_likes_id']);
     $conn->query("DELETE FROM community_likes WHERE post_id = $post_id");
-    header("Location: manage_cookbook.php?msg=" . urlencode("All likes cleared for this post!"));
+    header("Location: manage_community.php?msg=" . urlencode("All likes cleared for this post!"));
     exit();
 }
 
@@ -84,7 +84,7 @@ $posts = $conn->query($sql);
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="manageCookbookPage">
 
     <!-- Header Navigation -->
     <nav>
@@ -113,7 +113,7 @@ $posts = $conn->query($sql);
         <!-- Admin Role -->
         <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
             <a href="admin_dashboard.php">Dashboard</a>
-            <a href="manage_cookbook.php">Community Cookbook</a>
+            <a href="manage_community.php" class="active-nav">Manage Community</a>
 
             <div class="dropdown">
                 <a href="#">Manage Resources ▼</a>
@@ -139,7 +139,12 @@ $posts = $conn->query($sql);
     </span>
 </nav>
 
-    <div class="communityMainWrapper" style="margin-top: 30px; margin-bottom: 50px;">
+    <section class="about-hero manageCommunityHero">
+        <h1>Manage Community</h1>
+        <p>Review member posts and keep conversations welcoming, helpful, and inspiring.</p>
+    </section>
+
+    <main class="communityMainWrapper manageCommunityMain">
         
         <!-- Flash Messages -->
         <?php if (isset($_GET['msg'])): ?>
@@ -155,10 +160,12 @@ $posts = $conn->query($sql);
         <?php endif; ?>
 
         <!-- Search Bar -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-            <h2>Moderate Member Posts & Interactions</h2>
+        <div class="manageCommunityToolbar">
+            <div class="manageCommunityTitle">
+                <h2>Posts &amp; interactions</h2>
+            </div>
 
-            <form action="" method="GET" class="communitySearchForm" style="max-width: 350px; margin: 0;">
+            <form action="" method="GET" class="communitySearchForm manageCommunitySearch">
                 <div class="communitySearchInputGroup">
                     <i class="fa-solid fa-magnifying-glass communitySearchIcon"></i>
                     <input type="text" name="search" class="communityInput communitySearchInput" placeholder="Search post or user..." value="<?= htmlspecialchars($search) ?>">
@@ -168,7 +175,7 @@ $posts = $conn->query($sql);
         </div>
 
         <!-- Feed List -->
-        <div class="communityFeedList">
+        <div class="communityPostGrid">
             <?php if ($posts && $posts->num_rows > 0): ?>
                 <?php while ($post = $posts->fetch_assoc()): 
                     $post_id = $post['id'];
@@ -199,7 +206,7 @@ $posts = $conn->query($sql);
 
                         <?php if (!empty($post['image']) && file_exists("uploads/" . $post['image'])): ?>
                             <div class="communityPostImageContainer">
-                                <img src="uploads/<?= htmlspecialchars($post['image']) ?>" alt="Post Image" class="communityPostImg">
+                                <img src="uploads/<?= htmlspecialchars($post['image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="communityPostImg" loading="lazy">
                             </div>
                         <?php endif; ?>
 
@@ -214,7 +221,7 @@ $posts = $conn->query($sql);
                                 <span><strong><?= $like_count ?></strong> Likes</span>
                             </div>
                             <?php if ($like_count > 0): ?>
-                                <a href="manage_cookbook.php?clear_likes_id=<?= $post_id ?>" class="communityDeleteBtn" style="font-size: 12px;" onclick="return confirm('Clear all likes for this post?');">
+                                <a href="manage_community.php?clear_likes_id=<?= $post_id ?>" class="communityDeleteBtn" onclick="return confirm('Clear all likes for this post?');">
                                     <i class="fa-solid fa-heart-crack"></i> Clear Likes
                                 </a>
                             <?php endif; ?>
@@ -234,7 +241,7 @@ $posts = $conn->query($sql);
                                                 <strong style="font-size: 13px; color: var(--text-dark);"><?= htmlspecialchars(($comm['first_name'] ?? 'Member') . ' ' . ($comm['last_name'] ?? '')) ?>:</strong>
                                                 <span style="font-size: 13px; color: #555;"><?= htmlspecialchars($comm['comment_text'] ?? $comm['comment'] ?? '') ?></span>
                                             </div>
-                                            <a href="manage_cookbook.php?delete_comment_id=<?= $comm['id'] ?>" class="communityDeleteBtn" style="font-size: 11px; padding: 4px 8px;" onclick="return confirm('Delete this comment?');">
+                                            <a href="manage_community.php?delete_comment_id=<?= $comm['id'] ?>" class="communityDeleteBtn" onclick="return confirm('Delete this comment?');">
                                                 <i class="fa-solid fa-trash"></i> Delete Comment
                                             </a>
                                         </div>
@@ -247,7 +254,7 @@ $posts = $conn->query($sql);
 
                         <!-- Delete Whole Post Button -->
                         <div class="communityPostManageBar" style="margin-top: 15px; text-align: right;">
-                            <a href="manage_cookbook.php?delete_post_id=<?= $post_id ?>" class="communityDeleteBtn" style="padding: 8px 16px; font-weight: 600;" onclick="return confirm('Are you sure you want to delete this post and all associated comments/likes?');">
+                            <a href="manage_community.php?delete_post_id=<?= $post_id ?>" class="communityDeleteBtn" onclick="return confirm('Are you sure you want to delete this post and all associated comments/likes?');">
                                 <i class="fa-solid fa-trash"></i> Delete Post
                             </a>
                         </div>
@@ -260,17 +267,7 @@ $posts = $conn->query($sql);
             <?php endif; ?>
         </div>
 
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-socials">
-            <a href="#"><i class="fa-brands fa-facebook"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#"><i class="fa-brands fa-telegram"></i></a>
-        </div>
-        <p class="footer-copyright">&copy; <?= date('Y') ?> FoodFusion. All rights reserved.</p>
-    </footer>
+    </main>
 
 </body>
 </html>
