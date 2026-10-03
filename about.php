@@ -146,6 +146,7 @@ $cookie_accepted = isset($_COOKIE['foodfusion_cookie_accepted']) ? true : false;
         <input type="password" name="password" placeholder="Password" required><br><br>
         <button type="submit">Login</button>
     </form>
+    <p class="forgotPasswordLink"><a href="forgot_password.php">Forgot your password?</a></p>
     <br>
     <button onclick="closeAll()">Close</button>
 </div>

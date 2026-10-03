@@ -258,6 +258,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
         <input type="password" name="password" placeholder="Password" required><br><br>
         <button type="submit">Login</button>
     </form>
+    <p class="forgotPasswordLink"><a href="forgot_password.php">Forgot your password?</a></p>
     <br>
     <button onclick="closeAll()">Close</button>
 </div>

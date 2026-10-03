@@ -294,6 +294,7 @@ $cuisines_res = $conn->query("SELECT DISTINCT cuisine_type FROM recipes WHERE cu
         <input type="password" name="password" placeholder="Password" required><br><br>
         <button type="submit">Login</button>
     </form>
+    <p class="forgotPasswordLink"><a href="forgot_password.php">Forgot your password?</a></p>
     <br>
     <button onclick="closeAll()">Close</button>
 </div>
