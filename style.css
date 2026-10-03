@@ -4066,3 +4066,46 @@ img, video, canvas, svg {
     align-self: stretch;
     flex: none;
 }
+
+/* Add only this block at the bottom of style.css.
+   It supports phone layouts whose CSS viewport is up to 1000px wide.
+   At 1440px desktop width, none of these rules apply. */
+@media screen and (max-width: 1000px) {
+    html,
+    body {
+        min-height: 100%;
+    }
+
+    body {
+        min-height: 100vh;
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    body > main,
+    body > .main-container,
+    body > .about-container,
+    body > .recipesMain,
+    body > .publicResourcesMain,
+    body > .communityMainWrapper,
+    body > .adminDashboardMain,
+    body > .adminContactMain,
+    body > .adminResourcesMain,
+    body > .adminRecipesMain,
+    body > .editEntityMain,
+    body > .policy-layout {
+        flex: 1 0 auto;
+        padding-bottom: clamp(20px, 5vh, 48px);
+    }
+
+    body > footer {
+        flex: 0 0 auto;
+        width: 100%;
+        margin-top: auto !important;
+        margin-right: 0;
+        margin-left: 0;
+        left: auto;
+        right: auto;
+    }
+}
